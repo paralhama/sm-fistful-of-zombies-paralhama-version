@@ -92,6 +92,8 @@ int g_ZombieModelIndex;
 // higher priority for joining humans.
 int g_HumanPriority[MAXPLAYERS+1] = {0, ...};
 
+bool g_slow_infected = false;
+
 enum FoZRoundState
 {
     RoundPre,
@@ -157,6 +159,7 @@ public void OnPluginStart()
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_team", Event_PlayerTeam, EventHookMode_Pre);
+	HookEvent("player_hurt", OnPlayerHurt, EventHookMode_Post);
 
 	RegAdminCmd("foz_reload", Command_Reload, ADMFLAG_CONFIG,
 		"Force a reload of the configuration file");
@@ -172,7 +175,6 @@ public void OnPluginStart()
 	InitializeFistfulOfZombies();
 }
 
-
 public void OnClientPutInServer(int client)
 {
 	if (!IsEnabled()) return;
@@ -182,6 +184,7 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_OnTakeDamage, Hook_OnTakeDamage);
 	SDKHook(client, SDKHook_OnTakeDamage, OnTakefallDamage);
 	SDKHook(client, SDKHook_PreThinkPost, OnPreThinkPost);
+	SDKHook(client, SDKHook_TraceAttack, TraceAttack);
 
 	g_HumanPriority[client] = 0;
 }
@@ -370,7 +373,6 @@ void PlayerSpawnDelay(int userid)
 		RandomizeModel(client);
 		StripWeapons(client);
 		EmitZombieYell(client);
-		SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 320.0 ); 
 		PrintCenterText(client, "Ughhhh..... BRAINNNSSSS");
 	}
 }
@@ -600,38 +602,7 @@ public void OnMapInit(const char[] mapName)
             }
 		}
 	}
-}
-
-
-
-Action OnTakefallDamage(int client, int& attacker, int& inflictor, float& damage, int& damagetype)
-{
-    // Verifica se o jogador está no time 3
-    if (IsZombie(client))
-    {
-        // Verifica se o dano é de queda
-        if (damagetype & DMG_FALL)
-        {
-            // Verifica se o dano de queda é igual ou menor que 99...
-			// Se for maior que 99 significa que o player caiu em algum trigger que deverá matar ele instantaneamente.
-            if (damage <= 99.0)
-            {
-                // Desativa o dano
-                return Plugin_Handled;
-            }
-        }
-    }
-
-    return Plugin_Continue;
-}
-
-public void OnPreThinkPost(int client)
-{
-    if(IsZombie(client))
-    {
-        SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 300.0);
-    }
-}  
+} 
 
 Action Command_JoinTeam(int client, const char[] command, int argc)
 {
@@ -1367,5 +1338,113 @@ public Action ChangeLight(Handle timer)
 	}
 
 	return Plugin_Continue; // Retorna um valor explícito
+}
+// ################################################################################################################
+
+
+// ##########################Filter damage and slow movement infected player ######################################
+public Action TraceAttack(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &ammotype, int hitbox, int hitgroup)
+{
+    // Reduzir o dano se não for um tiro na cabeça
+    if (hitgroup != 1)
+    {
+        damage *= 0.45;
+    }
+    return Plugin_Changed;
+}
+
+// Função chamada quando o evento player_hurt é acionado
+public Action OnPlayerHurt(Event event, const char[] name, bool dontBroadcast)
+{
+	char weapon[64];
+	GetEventString(event, "weapon", weapon, sizeof(weapon));
+	int victim = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	if (IsZombie(victim))
+		// Verificar se a arma não contém as strings específicas
+		if (StrContains(weapon, "fists", false) == -1 &&
+		StrContains(weapon, "worldspawn", false) == -1 &&
+		StrContains(weapon, "kick", false) == -1 &&
+		StrContains(weapon, "physics", false) == -1 &&
+		StrContains(weapon, "blast", false) == -1 &&
+		StrContains(weapon, "dynamite", false) == -1 &&
+		StrContains(weapon, "x_arrow", false) == -1 &&
+		StrContains(weapon, "thrown", false) == -1 &&
+		StrContains(weapon, "knife", false) == -1 &&
+		StrContains(weapon, "axe", false) == -1 &&
+		StrContains(weapon, "machete", false) == -1)
+		{
+			SetSlowInfectedTrue();
+
+			// Iniciar um temporizador para restaurar a velocidade após 0.5 segundos
+			CreateTimer(0.5, ResetPlayerSpeed, victim);		
+		}
+
+	return Plugin_Continue;
+}
+
+// Função para restaurar a velocidade do jogador para 300.0
+public Action ResetPlayerSpeed(Handle timer, any client)
+{
+	if (IsZombie(client)) {
+		SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 300.0);
+		ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
+		SetSlowInfectedFalse();
+	}
+	return Plugin_Stop;
+}
+
+public void SetSlowInfectedTrue()
+{
+    g_slow_infected = true;
+}
+
+
+public void SetSlowInfectedFalse()
+{
+    g_slow_infected = false;
+}
+
+public void OnPreThinkPost(int client)
+{
+    // Verifica se o cliente é um zumbi
+    if (IsZombie(client))
+    {
+        // Condicional para definir a velocidade máxima com base no estado de g_slow_infected
+        if (g_slow_infected)
+        {
+            SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 100.0);
+        }
+        else
+        {
+            SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 300.0);
+        }
+        
+        // Atualiza o estado da entidade
+        ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
+    }
+}
+
+Action OnTakefallDamage(int client, int& attacker, int& inflictor, float& damage, int& damagetype)
+{
+	// Verifica se o jogador está no time 3
+	if (IsZombie(client))
+	{
+		// Verifica se o dano é de queda
+		if (damagetype & DMG_FALL)
+		{
+			SetSlowInfectedTrue();
+			CreateTimer(0.5, ResetPlayerSpeed, client);
+			// Verifica se o dano de queda é igual ou menor que 99...
+			// Se for maior que 99 significa que o player caiu em algum trigger que deverá matar ele instantaneamente.
+			if (damage <= 99.0)
+			{
+				// Desativa o dano
+				return Plugin_Handled;
+			}
+		}
+	}
+
+	return Plugin_Continue;
 }
 // ################################################################################################################
