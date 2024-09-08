@@ -3,7 +3,7 @@
  * =============================================================================
  * Fistful Of Zombies
  * Zombie survival for Fistful of Frags
- *
+ * New features added by Paralhama + Map Lighting Changer by Nocky
  * Copyright 2016 CrimsonTautology
  * =============================================================================
  *
@@ -30,8 +30,8 @@ char Path[PLATFORM_MAX_PATH], MapName[MAX_MAPS][128], LightValue[MAX_MAPS][128];
 
 int loadedMaps;
 
-#define PLUGIN_VERSION "1.10.1"
-#define PLUGIN_NAME "[FoF] Fistful Of Zombies"
+#define PLUGIN_VERSION "2.0"
+#define PLUGIN_NAME "[FoF] Fistful Of Zombies - Paralhama version"
 
 #define DMG_FALL (1 << 5)
 
@@ -63,6 +63,10 @@ ConVar g_RoundTimeCvar;
 ConVar g_RespawnTimeCvar;
 ConVar g_RatioCvar;
 ConVar g_InfectionCvar;
+ConVar g_Infected_Speed;
+ConVar g_Infected_Slow;
+ConVar g_Infected_Slow_Time;
+ConVar g_Infected_Damage;
 
 ConVar g_TeambalanceAllowedCvar;
 ConVar g_TeamsUnbalanceLimitCvar;
@@ -105,9 +109,9 @@ public Plugin myinfo =
 {
     name = PLUGIN_NAME,
     author = "CrimsonTautology, Paralhama and Nocky",
-    description = "Zombie Survival for Fistful of Frags",
+    description = "Zombie Survival for Fistful of Frags. New features added by Paralhama + Map Lighting Changer by Nocky",
     version = PLUGIN_VERSION,
-    url = "https://github.com/CrimsonTautology/sm-fistful-of-zombies"
+    url = "https://github.com/paralhama/sm-fistful-of-zombies"
 };
 
 public void OnPluginStart()
@@ -148,6 +152,26 @@ public void OnPluginStart()
 		"Chance that a human will be infected when punched by a zombie. Value is scaled such that more human players increase the chance",
 		FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
+	g_Infected_Speed = CreateConVar(
+		"foz_infected_speed", "300.0",
+		"Change the max speed for a infected player",
+		FCVAR_NOTIFY, true, 255.0, true, 320.0);
+
+	g_Infected_Slow = CreateConVar(
+		"foz_infected_slow", "100.0",
+		"Change the max speed for an infected player when receive damage",
+		FCVAR_NOTIFY, true, 0.0, true, 320.0);
+
+	g_Infected_Slow_Time = CreateConVar(
+		"foz_infected_slow_time", "0.8",
+		"Seconds that the infected player will be slowed when taking damage",
+		FCVAR_NOTIFY, true, 0.5, true, 2.0);
+
+	g_Infected_Damage = CreateConVar(
+		"foz_infected_damage", "0.45",
+		"Adjusts the damage multiplier for infected players, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.",
+		FCVAR_NOTIFY, true, 0.10, true, 1.0);
+
 	g_TeambalanceAllowedCvar = FindConVar("fof_sv_teambalance_allowed");
 	g_TeamsUnbalanceLimitCvar = FindConVar("mp_teams_unbalance_limit");
 	g_AutoteambalanceCvar = FindConVar("mp_autoteambalance");
@@ -157,6 +181,7 @@ public void OnPluginStart()
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("round_end", Event_RoundEnd);
 	HookEvent("player_team", Event_PlayerTeam, EventHookMode_Pre);
+	HookEvent("player_hurt", OnPlayerHurt, EventHookMode_Post);
 
 	RegAdminCmd("foz_reload", Command_Reload, ADMFLAG_CONFIG,
 		"Force a reload of the configuration file");
@@ -180,8 +205,7 @@ public void OnClientPutInServer(int client)
 	SetDefaultConVars();
 	SDKHook(client, SDKHook_WeaponCanUse, Hook_OnWeaponCanUse);
 	SDKHook(client, SDKHook_OnTakeDamage, Hook_OnTakeDamage);
-	SDKHook(client, SDKHook_OnTakeDamage, OnTakefallDamage);
-	SDKHook(client, SDKHook_PreThinkPost, OnPreThinkPost);
+	SDKHook(client, SDKHook_TraceAttack, Infected_Damage_Filter);
 
 	g_HumanPriority[client] = 0;
 }
@@ -251,7 +275,7 @@ public void OnMapStart()
 
     // initial setup
     ConvertSpawns();
-    ConvertWhiskeyAndHorse(g_LootTable, g_LootTotalWeight);
+    WeaponSpawn(g_LootTable, g_LootTotalWeight);
     g_TeamplayEntity = SpawnZombieTeamplayEntity();
     g_AutoSetGameDescription = true;
 
@@ -306,8 +330,8 @@ void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
     SetRoundState(RoundGrace);
     CreateTimer(10.0, Timer_EndGrace, TIMER_FLAG_NO_MAPCHANGE);
 
-    ConvertWhiskeyAndHorse(g_LootTable, g_LootTotalWeight);
-    RemoveCrates();
+    WeaponSpawn(g_LootTable, g_LootTotalWeight);
+    //RemoveCrates();
     RemoveTeamplayEntities();
     RandomizeTeams();
     SetDefaultConVars();
@@ -369,10 +393,21 @@ void PlayerSpawnDelay(int userid)
 		// force client model
 		RandomizeModel(client);
 		StripWeapons(client);
+		FakeClientCommandEx(client, "use weapon_fists");
 		EmitZombieYell(client);
-		SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 320.0 ); 
+		CreateTimer(0.1, SetMaxSpeedInfected, userid, TIMER_FLAG_NO_MAPCHANGE);
 		PrintCenterText(client, "Ughhhh..... BRAINNNSSSS");
 	}
+}
+
+Action SetMaxSpeedInfected(Handle timer, int userid)
+{
+	float MaxSpeed = g_Infected_Speed.FloatValue;
+
+	int client = GetClientOfUserId(userid);
+	SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", MaxSpeed ); 
+	ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
+	return Plugin_Handled;
 }
 
 void BecomeZombieDelay(int userid)
@@ -441,36 +476,37 @@ Action Timer_SetConvars(Handle timer)
 
 Action Timer_Repeat(Handle timer)
 {
-    if (!IsEnabled())
-        return Plugin_Continue;
+	if (!IsEnabled())
+		return Plugin_Continue;
 
-    // NOTE: Spawning a teamplay entity seems to now change game description to
-    // Teamplay. Need to re-set game description back to zombies next iteration.
-    if (g_AutoSetGameDescription)
-    {
-        SetGameDescription(GAME_DESCRIPTION);
-        g_AutoSetGameDescription = false;
-    }
+	// NOTE: Spawning a teamplay entity seems to now change game description to
+	// Teamplay. Need to re-set game description back to zombies next iteration.
+	if (g_AutoSetGameDescription)
+	{
+		SetGameDescription(GAME_DESCRIPTION);
+		g_AutoSetGameDescription = false;
+	}
 
-    SetDefaultConVars();
-    RoundEndCheck();
+	SetDefaultConVars();
+	RoundEndCheck();
 
-    for (int client = 1; client <= MaxClients; client++)
-    {
-        if (!IsClientInGame(client))
-            continue;
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		if (!IsClientInGame(client))
+			continue;
 
-        if (IsHuman(client))
-        {
-            // no-op
-        }
-        else if (IsZombie(client))
-        {
-            StripWeapons(client);
-        }
-    }
+		if (IsHuman(client))
+		{
+		// no-op
+		}
+		else if (IsZombie(client))
+		{
+			StripWeapons(client);
+			FakeClientCommandEx(client, "use weapon_fists");
+		}
+	}
 
-    return Plugin_Handled;
+	return Plugin_Handled;
 }
 
 
@@ -497,36 +533,134 @@ Action Hook_OnWeaponCanUse(int client, int weapon)
     return Plugin_Continue;
 }
 
+
 Action Hook_OnTakeDamage(int victim, int& attacker, int& inflictor,
-        float& damage, int& damagetype, int& weapon, float damageForce[3],
-        float damagePosition[3])
+                         float& damage, int& damagetype, int& weapon, 
+                         float damageForce[3], float damagePosition[3])
 {
-    if (!IsEnabled()) return Plugin_Continue;
-    if (!IsClientIngame(attacker)) return Plugin_Continue;
-    if (!IsClientIngame(victim)) return Plugin_Continue;
-    if (attacker == victim) return Plugin_Continue;
+	if (!IsEnabled())
+		return Plugin_Continue;
 
-    if (weapon > 0 && IsHuman(victim) && IsZombie(attacker))
+	if (!IsClientIngame(victim))
+		return Plugin_Continue;
+
+	// For infected:
+	if (IsZombie(victim))
+	{
+		// Cancel non-lethal fall damage
+		if (damagetype & DMG_FALL)
+		{
+			float DamageSlow = g_Infected_Slow.FloatValue;
+			float SlowTime = g_Infected_Slow_Time.FloatValue;
+			if (damage <= 100.0)
+			{
+				// Se nenhuma dessas palavras estiver presente, altere a velocidade máxima do jogador para 100.0
+				SetEntPropFloat(victim, Prop_Send, "m_flMaxspeed", DamageSlow);
+
+				// Notificar o motor do jogo sobre a mudança de estado
+				ChangeEdictState(victim, GetEntSendPropOffs(victim, "m_flMaxspeed"));
+
+				// Iniciar um temporizador para restaurar a velocidade
+				CreateTimer(SlowTime, ResetPlayerSpeed, victim);		
+				return Plugin_Handled;
+			}
+		}
+
+		return Plugin_Continue;
+	}
+
+	if (attacker == victim)
+		return Plugin_Continue;
+
+	if (!IsClientIngame(attacker))
+		return Plugin_Continue;
+
+	// For humans:
+	if (IsZombie(attacker))
+	{
+		// Random chance to be infected when attacked by infected
+		if (weapon <= 0)
+			return Plugin_Continue;
+
+		char classname[16];
+		GetEntityClassname(weapon, classname, sizeof(classname));
+		if (StrEqual(classname, "weapon_fists"))
+		{
+			if (InfectionChanceRoll())
+			{
+				BecomeInfected(victim);
+			}
+		}
+	}
+	else
+	{
+		// Reduce damage of friendly-fire
+		damage = float(RoundToCeil(damage / 10.0));
+		return Plugin_Changed;
+	}
+
+	return Plugin_Continue;
+}
+
+// Função chamada quando o evento player_hurt é acionado
+public Action OnPlayerHurt(Event event, const char[] name, bool dontBroadcast)
+{
+	char weapon[64];
+	GetEventString(event, "weapon", weapon, sizeof(weapon));
+	int victim = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	if (IsZombie(victim))
+	{
+		// Verificar se a arma não contém as strings específicas
+		if (StrContains(weapon, "x_arrow", false) == -1 &&
+		StrContains(weapon, "physics", false) == -1 &&
+		StrContains(weapon, "prop_dynamic", false) == -1 &&
+		StrContains(weapon, "dynamite", false) == -1 &&
+		StrContains(weapon, "blast", false) == -1)
+		{
+			float DamageSlow = g_Infected_Slow.FloatValue;
+			float SlowTime = g_Infected_Slow_Time.FloatValue;
+
+			// Se nenhuma dessas palavras estiver presente, altere a velocidade máxima do jogador para 100.0
+			SetEntPropFloat(victim, Prop_Send, "m_flMaxspeed", DamageSlow);
+
+			// Notificar o motor do jogo sobre a mudança de estado
+			ChangeEdictState(victim, GetEntSendPropOffs(victim, "m_flMaxspeed"));
+
+			// Iniciar um temporizador para restaurar a velocidade
+			CreateTimer(SlowTime, ResetPlayerSpeed, victim);		
+		}
+	}
+
+	return Plugin_Continue;
+}
+
+// Função para restaurar a velocidade do jogador para 300.0
+public Action ResetPlayerSpeed(Handle timer, any client)
+{
+	if (IsClientInGame(client) && IsZombie(client))
+	{
+		float MaxSpeed = g_Infected_Speed.FloatValue;
+
+		SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", MaxSpeed);
+		ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
+	}
+	return Plugin_Stop;
+}
+
+public Action Infected_Damage_Filter(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &ammotype, int hitbox, int hitgroup)
+{
+    // Reduzir o dano se não for um tiro na cabeça
+    if (IsHuman(attacker) && IsZombie(victim))
     {
-        char class[MAX_KEY_LENGTH];
-        GetEntityClassname(weapon, class, sizeof(class));
-        if (StrEqual(class, "weapon_fists"))
-        {
-            // random chance that you can be infected
-            if (InfectionChanceRoll())
-            {
-                BecomeInfected(victim);
-            }
-        }
+		if (hitgroup != 1)
+		{
+			float InfecteDamage = g_Infected_Damage.FloatValue;
 
+			damage *= InfecteDamage;
+		}
     }
-    else if (IsHuman(victim) && IsHuman(attacker))
-    {
-        // reduce the damage of friendly fire
-        damage = view_as<float>(RoundToCeil(damage / 10.0));
-    }
-
-    return Plugin_Continue;
+    return Plugin_Changed;
 }
 
 public void OnMapInit(const char[] mapName)
@@ -563,33 +697,52 @@ public void OnMapInit(const char[] mapName)
 			}
         }
         else if (StrEqual(classname, "prop_physics_respawnable"))
-        {
-            // Verifica se a chave "spawnflags" é 0, 1 ou 256
-            char spawnflags[32];
-            if (entry.GetNextKey("spawnflags", spawnflags, sizeof(spawnflags)) != -1 && (StrEqual(spawnflags, "256") || StrEqual(spawnflags, "0") || StrEqual(spawnflags, "1")))
-            {
-                // Atualiza o modelo para "models/elpaso/barrel2_explosive.mdl"
-                int modelIndex = entry.FindKey("model", -1);
-                if (modelIndex != -1)
-                {
-                    entry.Update(modelIndex, "model", "models/elpaso/barrel2_explosive.mdl");
-                }
+		{
+			// Verifica se a chave "model" contém "FurnitureDresser", "wood_crate"
+			char modelValue[MAX_KEY_LENGTH];
+			if (entry.GetNextKey("model", modelValue, sizeof(modelValue)) != -1 &&
+				(StrContains(modelValue, "FurnitureDresser") != -1 || 
+				 StrContains(modelValue, "wood_crate") != -1 ||
+				 StrContains(modelValue, "barrel1_explosive") != -1))
+			{
+				// Atualiza o modelo para "models/elpaso/barrel2_explosive.mdl"
+				int modelIndex = entry.FindKey("model", -1);
+				if (modelIndex != -1)
+				{
+					entry.Update(modelIndex, "model", "models/elpaso/barrel2_explosive.mdl");
+				}
 
-                // Atualiza o tempo de respawn para 30
-                int respawnTimeIndex = entry.FindKey("RespawnTime", -1);
-                if (respawnTimeIndex != -1)
-                {
-                    entry.Update(respawnTimeIndex, "RespawnTime", "30");
-                }
+				// Atualiza o tempo de respawn para 30
+				int respawnTimeIndex = entry.FindKey("RespawnTime", -1);
+				if (respawnTimeIndex != -1)
+				{
+					entry.Update(respawnTimeIndex, "RespawnTime", "30");
+				}
 
-                // Atualiza o spawnflags para 0
-                int spawnflagsIndex = entry.FindKey("spawnflags", -1);
-                if (spawnflagsIndex != -1)
-                {
-                    entry.Update(spawnflagsIndex, "spawnflags", "0");
-                }
-            }
-        }
+				// Atualiza o spawnflags para 0
+				int spawnflagsIndex = entry.FindKey("spawnflags", -1);
+				if (spawnflagsIndex != -1)
+				{
+					entry.Update(spawnflagsIndex, "spawnflags", "0");
+				}
+
+				// Atualiza fademindist para -1
+				int fademindistIndex = entry.FindKey("fademindist", -1);
+				if (fademindistIndex != -1)
+				{
+					entry.Update(fademindistIndex, "fademindist", "-1");
+				}
+
+				// Atualiza fademaxdist para 0
+				int fademaxdistIndex = entry.FindKey("fademaxdist", -1);
+				if (fademaxdistIndex != -1)
+				{
+					entry.Update(fademaxdistIndex, "fademaxdist", "0");
+				}
+
+			}
+		}
+
         else if (StrEqual(classname, "worldspawn"))
         {
             // Atualiza o skyname para "fof05"
@@ -601,37 +754,6 @@ public void OnMapInit(const char[] mapName)
 		}
 	}
 }
-
-
-
-Action OnTakefallDamage(int client, int& attacker, int& inflictor, float& damage, int& damagetype)
-{
-    // Verifica se o jogador está no time 3
-    if (IsZombie(client))
-    {
-        // Verifica se o dano é de queda
-        if (damagetype & DMG_FALL)
-        {
-            // Verifica se o dano de queda é igual ou menor que 99...
-			// Se for maior que 99 significa que o player caiu em algum trigger que deverá matar ele instantaneamente.
-            if (damage <= 99.0)
-            {
-                // Desativa o dano
-                return Plugin_Handled;
-            }
-        }
-    }
-
-    return Plugin_Continue;
-}
-
-public void OnPreThinkPost(int client)
-{
-    if(IsZombie(client))
-    {
-        SetEntPropFloat(client, Prop_Data, "m_flMaxspeed", 300.0);
-    }
-}  
 
 Action Command_JoinTeam(int client, const char[] command, int argc)
 {
@@ -860,10 +982,10 @@ void SetDefaultConVars()
     g_AutoteambalanceCvar.SetInt(0, false, false);
 }
 
-void RemoveCrates()
-{
-    Entity_KillAllByClassName("fof_crate*");
-}
+//void RemoveCrates()
+//{
+//    Entity_KillAllByClassName("fof_crate*");
+//}
 
 void RemoveTeamplayEntities()
 {
@@ -905,7 +1027,7 @@ void ConvertSpawns()
 
 }
 
-void ConvertWhiskeyAndHorse(KeyValues loot_table, int loot_total_weight)
+void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 {
     char loot[MAX_KEY_LENGTH];
     int count = 0;
@@ -933,9 +1055,46 @@ void ConvertWhiskeyAndHorse(KeyValues loot_table, int loot_total_weight)
 
     // Reset entity reference for processing fof_horse entities
     entity = INVALID_ENT_REFERENCE;
-
     // Process fof_horse entities
     while((entity = FindEntityByClassname(entity, "fof_horse")) != INVALID_ENT_REFERENCE)
+    {
+        // Get original's position and remove it
+        Entity_GetAbsOrigin(entity, origin);
+        Entity_GetAbsAngles(entity, angles);
+        Entity_Kill(entity);
+
+        // Spawn a replacement at the same position
+        GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
+        if (StrEqual(loot, "nothing", false)) continue;
+
+        converted = Weapon_Create(loot, origin, angles);
+        Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+
+        count++;
+    }
+
+    // Process npc_horse entities
+    while((entity = FindEntityByClassname(entity, "npc_horse")) != INVALID_ENT_REFERENCE)
+    {
+        // Get original's position and remove it
+        Entity_GetAbsOrigin(entity, origin);
+        Entity_GetAbsAngles(entity, angles);
+        Entity_Kill(entity);
+
+        // Spawn a replacement at the same position
+        GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
+        if (StrEqual(loot, "nothing", false)) continue;
+
+        converted = Weapon_Create(loot, origin, angles);
+        Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+
+        count++;
+    }
+
+    // Reset entity reference for processing fof_crate entities
+    entity = INVALID_ENT_REFERENCE;
+    // Process fof_crate entities
+    while((entity = FindEntityByClassname(entity, "fof_crate*")) != INVALID_ENT_REFERENCE)
     {
         // Get original's position and remove it
         Entity_GetAbsOrigin(entity, origin);
@@ -1116,15 +1275,43 @@ void StripWeapons(int client)
 
     for (int i = 0; i <= 47; i++)
     {
-        weapon_ent = GetEntDataEnt2(client,offs + (i * 4));
+        weapon_ent = GetEntDataEnt2(client, offs + (i * 4));
         if (weapon_ent == -1) continue;
 
         GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
         if (StrEqual(class_name, "weapon_fists")) continue;
 
+        // Obter a posição do jogador para spawnar a arma
+        float pos[3];
+        GetClientAbsOrigin(client, pos);
+
+        // Criar a entidade da arma dropada
+        int dropped_weapon = CreateEntityByName(class_name);
+        if (dropped_weapon != -1)
+        {
+            TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
+            DispatchSpawn(dropped_weapon);
+        }
+
+        // Remover a arma do jogador
         RemovePlayerItem(client, weapon_ent);
         RemoveEdict(weapon_ent);
+        
+        // Equipar o jogador com "weapon_fists"
+        UseWeapon(client, "weapon_fists");
+        FakeClientCommandEx(client, "use weapon_fists");
+        CreateTimer(0.1, SetMaxSpeedInfectedStrip, client, TIMER_FLAG_NO_MAPCHANGE);
     }
+}
+
+
+Action SetMaxSpeedInfectedStrip(Handle timer, int client)
+{
+	float MaxSpeed = g_Infected_Speed.FloatValue;
+
+	SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", MaxSpeed ); 
+	ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
+	return Plugin_Handled;
 }
 
 void EmitZombieYell(int client)
@@ -1201,17 +1388,18 @@ void BecomeInfected(int client)
 
 void InfectedToZombie(int client)
 {
-    StripWeapons(client);
-    UseWeapon(client, "weapon_fists");
+	StripWeapons(client);
+	UseWeapon(client, "weapon_fists");
+	FakeClientCommandEx(client, "use weapon_fists");
 
-    JoinZombieTeam(client);
-    Entity_SetModelIndex(client, g_ZombieModelIndex);
+	JoinZombieTeam(client);
+	Entity_SetModelIndex(client, g_ZombieModelIndex);
 
-    EmitZombieYell(client);
-    SetEntPropFloat(client, Prop_Send, "m_flDrunkness", 0.0);
+	EmitZombieYell(client);
+	SetEntPropFloat(client, Prop_Send, "m_flDrunkness", 0.0);
 
-    PrintCenterTextAll("%N has succumbed to the infection...", client);
-    EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
+	PrintCenterTextAll("%N has succumbed to the infection...", client);
+	EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
 }
 
 bool InfectionStep(int& client, float& interval, int& currentCall)
