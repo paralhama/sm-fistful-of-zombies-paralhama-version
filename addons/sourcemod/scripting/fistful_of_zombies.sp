@@ -117,7 +117,6 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	AutoExecConfig(true, "fof_zombies_config");
-	CreateTimer(1.0, ChangeLight);
 
 	CreateConVar("foz_version", PLUGIN_VERSION, PLUGIN_NAME,
 		FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
@@ -212,77 +211,78 @@ public void OnClientPutInServer(int client)
 
 public void OnMapStart()
 {
-    if (!IsEnabled()) return;
+	CreateTimer(1.0, ChangeLight);
+	if (!IsEnabled()) return;
 
-    char tmp[PLATFORM_MAX_PATH];
+	char tmp[PLATFORM_MAX_PATH];
 
-    // cache materials
-    PrecacheSound(SOUND_ROUNDSTART, true);
-    PrecacheSound(SOUND_STINGER, true);
-    PrecacheSound(SOUND_NOPE, true);
+	// cache materials
+	PrecacheSound(SOUND_ROUNDSTART, true);
+	PrecacheSound(SOUND_STINGER, true);
+	PrecacheSound(SOUND_NOPE, true);
 
-    // precache zombie sounds
-    for (int i = 1; i <= 3; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/foot%d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	// precache zombie sounds
+	for (int i = 1; i <= 3; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/foot%d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    for (int i = 1; i <= 14; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/moan-%02d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	for (int i = 1; i <= 14; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/moan-%02d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    for (int i = 1; i <= 4; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/zombie_chase-%d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	for (int i = 1; i <= 4; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/zombie_chase-%d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    for (int i = 1; i <= 4; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/moan_loop%d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	for (int i = 1; i <= 4; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/moan_loop%d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    for (int i = 1; i <= 2; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/claw_miss%d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	for (int i = 1; i <= 2; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/claw_miss%d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    for (int i = 1; i <= 3; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/claw_strike%d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	for (int i = 1; i <= 3; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/claw_strike%d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    for (int i = 1; i <= 3; i++)
-    {
-        Format(tmp, sizeof(tmp), "npc/zombie/zombie_die%d.wav", i);
-        PrecacheSound(tmp, true);
-    }
+	for (int i = 1; i <= 3; i++)
+	{
+		Format(tmp, sizeof(tmp), "npc/zombie/zombie_die%d.wav", i);
+		PrecacheSound(tmp, true);
+	}
 
-    PrecacheSound("vehicles/train/whistle.wav", true);
-    PrecacheSound("player/fallscream1.wav", true);
+	PrecacheSound("vehicles/train/whistle.wav", true);
+	PrecacheSound("player/fallscream1.wav", true);
 
-    g_VigilanteModelIndex = PrecacheModel("models/playermodels/player1.mdl");
-    g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
-    g_BandidoModelIndex = PrecacheModel("models/playermodels/bandito.mdl");
-    g_RangerModelIndex = PrecacheModel("models/playermodels/frank.mdl");
-    g_ZombieModelIndex = PrecacheModel("models/zombies/fof_zombie.mdl");
+	g_VigilanteModelIndex = PrecacheModel("models/playermodels/player1.mdl");
+	g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
+	g_BandidoModelIndex = PrecacheModel("models/playermodels/bandito.mdl");
+	g_RangerModelIndex = PrecacheModel("models/playermodels/frank.mdl");
+	g_ZombieModelIndex = PrecacheModel("models/zombies/fof_zombie.mdl");
 
-    // initial setup
-    ConvertSpawns();
-    WeaponSpawn(g_LootTable, g_LootTotalWeight);
-    g_TeamplayEntity = SpawnZombieTeamplayEntity();
-    g_AutoSetGameDescription = true;
+	// initial setup
+	ConvertSpawns();
+	WeaponSpawn(g_LootTable, g_LootTotalWeight);
+	g_TeamplayEntity = SpawnZombieTeamplayEntity();
+	g_AutoSetGameDescription = true;
 
-    SetRoundState(RoundPre);
+	SetRoundState(RoundPre);
 
-    CreateTimer(1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
-    CreateTimer(0.001, Timer_SetConvars, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	CreateTimer(0.001, Timer_SetConvars, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public void OnConfigsExecuted()
