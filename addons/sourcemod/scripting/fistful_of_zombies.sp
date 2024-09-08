@@ -67,6 +67,7 @@ ConVar g_Infected_Speed;
 ConVar g_Infected_Slow;
 ConVar g_Infected_Slow_Time;
 ConVar g_Infected_Damage;
+ConVar g_Zombie_Model;
 
 ConVar g_TeambalanceAllowedCvar;
 ConVar g_TeamsUnbalanceLimitCvar;
@@ -171,6 +172,11 @@ public void OnPluginStart()
 		"Adjusts the damage multiplier for infected players, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.",
 		FCVAR_NOTIFY, true, 0.10, true, 1.0);
 
+	g_Zombie_Model = CreateConVar(
+		"foz_zombie_model", "models/zombies/fof_zombie.mdl",
+		"Defines the model path for the infected players.",
+		FCVAR_NOTIFY);
+
 	g_TeambalanceAllowedCvar = FindConVar("fof_sv_teambalance_allowed");
 	g_TeamsUnbalanceLimitCvar = FindConVar("mp_teams_unbalance_limit");
 	g_AutoteambalanceCvar = FindConVar("mp_autoteambalance");
@@ -267,11 +273,14 @@ public void OnMapStart()
 	PrecacheSound("vehicles/train/whistle.wav", true);
 	PrecacheSound("player/fallscream1.wav", true);
 
+	char sZombieModel[MAX_KEY_LENGTH];
+	g_Zombie_Model.GetString(sZombieModel, sizeof(sZombieModel));
+
 	g_VigilanteModelIndex = PrecacheModel("models/playermodels/player1.mdl");
 	g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
 	g_BandidoModelIndex = PrecacheModel("models/playermodels/bandito.mdl");
 	g_RangerModelIndex = PrecacheModel("models/playermodels/frank.mdl");
-	g_ZombieModelIndex = PrecacheModel("models/zombies/fof_zombie.mdl");
+	g_ZombieModelIndex = PrecacheModel(sZombieModel);
 
 	// initial setup
 	ConvertSpawns();
@@ -616,6 +625,7 @@ public Action OnPlayerHurt(Event event, const char[] name, bool dontBroadcast)
 		StrContains(weapon, "physics", false) == -1 &&
 		StrContains(weapon, "prop_dynamic", false) == -1 &&
 		StrContains(weapon, "dynamite", false) == -1 &&
+		StrContains(weapon, "kick", false) == -1 &&
 		StrContains(weapon, "blast", false) == -1)
 		{
 			float DamageSlow = g_Infected_Slow.FloatValue;

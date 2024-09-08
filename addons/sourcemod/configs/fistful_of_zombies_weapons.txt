@@ -14,10 +14,12 @@ fistful_of_zombies
 
         weapon_remington_army { weight 10 }
         weapon_hammerless { weight 10 }
+        weapon_bow_black { weight 10 }
 
         weapon_axe { weight 9 }
         weapon_schofield { weight 9 }
         weapon_carbine { weight 9 }
+        weapon_dynamite { weight 9 }
 
         weapon_maresleg { weight 8 }
         weapon_dynamite_belt { weight 8 } 
@@ -29,13 +31,12 @@ fistful_of_zombies
 
         weapon_whiskey { weight 4 }
         weapon_machete { weight 4 }
+        weapon_dynamite_black { weight 4 }
 
         weapon_shotgun { weight 2 }
         weapon_sharps { weight 2 }
         weapon_walker { weight 2 }
 
-        weapon_smg1 { weight 1 }
-        weapon_rpg { weight 1 }
 	}
 
     //A random list of gear a player can start with
