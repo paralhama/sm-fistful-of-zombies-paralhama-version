@@ -3,7 +3,7 @@ I added some new features to this plugin :D
 - Infecteds do not take fall damage and move faster.
 - Infected are slowed down when receiving any damage that is not caused by `x_arrow`, `physics`, `prop_dynamic`, `dynamite` or `blast`!                         
 If the infected player receives damage from any of the items on this list, the player will not be slowed down, as these items already cause a slowdown.
-- In the ![CrimsonTautology](https://github.com/CrimsonTautology/sm-fistful-of-zombies) version, all the whiskers scattered around the maps are removed and replaced with random weapons. I also added fof_horse, npc_horse, and all fof_crates to be replaced with weapons as well.
+- In the ![CrimsonTautology](https://github.com/CrimsonTautology/sm-fistful-of-zombies) version,  all the whiskeys around the maps are removed and replaced with random weapons. I also added fof_horse, npc_horse, and all fof_crates to be replaced with weapons as well.
 - Infected players can still pick up some weapons, even though a function is in place to prevent this and remove the weapon from the player. This creates an issue where, when an infected player picks up a weapon, it is removed from both the player and the map, reducing weapon availability for the human team. The solution was to drop the removed weapon at the position of the infected player who picked it up.
 - Replaced all small TNT barrels and some props with large TNT barrels. Now, all `prop_physics_respawnable` that contain the models `FurnitureDresser`, `wood_crate`, and `barrel1_explosive` are converted to 'barrel2_explosive'.
 - Commands added on `fof_zombies_config.cfg`
