@@ -49,7 +49,7 @@ If the infected player receives damage from any of the items on this list, the p
 
 # Let me know if you know how to add any of these future ideas listed above :)
 
-![Build Status](https://github.com/CrimsonTautology/sm-fistful-of-zombies/workflows/Build%20plugins/badge.svg?style=flat-square)
+[Build Status](https://github.com/CrimsonTautology/sm-fistful-of-zombies/workflows/Build%20plugins/badge.svg?style=flat-square)
 [![GitHub stars](https://img.shields.io/github/stars/CrimsonTautology/sm-fistful-of-zombies?style=flat-square)](https://github.com/CrimsonTautology/sm-fistful-of-zombies/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/CrimsonTautology/sm-fistful-of-zombies.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-fistful-of-zombies/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/CrimsonTautology/sm-fistful-of-zombies.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-fistful-of-zombies/pulls)
