@@ -1279,39 +1279,39 @@ void UseWeapon(int client, const char[] weapon, bool second=false)
 
 void StripWeapons(int client)
 {
-    int weapon_ent;
-    char class_name[MAX_KEY_LENGTH];
-    int offs = FindSendPropInfo("CBasePlayer","m_hMyWeapons");
+	int weapon_ent;
+	char class_name[MAX_KEY_LENGTH];
+	int offs = FindSendPropInfo("CBasePlayer", "m_hMyWeapons");
 
-    for (int i = 0; i <= 47; i++)
-    {
-        weapon_ent = GetEntDataEnt2(client, offs + (i * 4));
-        if (weapon_ent == -1) continue;
+	// Obter a posição do jogador para spawnar a arma
+	float pos[3];
+	GetClientAbsOrigin(client, pos);
+	pos[2] += 50.0;
+	for (int i = 0; i <= 47; i++)
+	{
+		weapon_ent = GetEntDataEnt2(client, offs + (i * 4));
+		if (weapon_ent == -1) continue;
 
-        GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
-        if (StrEqual(class_name, "weapon_fists")) continue;
+		GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
+		if (StrEqual(class_name, "weapon_fists")) continue;
 
-        // Obter a posição do jogador para spawnar a arma
-        float pos[3];
-        GetClientAbsOrigin(client, pos);
+		// Criar a entidade da arma dropada
+		int dropped_weapon = CreateEntityByName(class_name);
+		if (dropped_weapon != -1)
+		{
+			TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
+			DispatchSpawn(dropped_weapon);
+		}
 
-        // Criar a entidade da arma dropada
-        int dropped_weapon = CreateEntityByName(class_name);
-        if (dropped_weapon != -1)
-        {
-            TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
-            DispatchSpawn(dropped_weapon);
-        }
+		// Remover a arma do jogador
+		RemovePlayerItem(client, weapon_ent);
+		RemoveEdict(weapon_ent);
+	}
 
-        // Remover a arma do jogador
-        RemovePlayerItem(client, weapon_ent);
-        RemoveEdict(weapon_ent);
-        
-        // Equipar o jogador com "weapon_fists"
-        UseWeapon(client, "weapon_fists");
-        FakeClientCommandEx(client, "use weapon_fists");
-        CreateTimer(0.1, SetMaxSpeedInfectedStrip, client, TIMER_FLAG_NO_MAPCHANGE);
-    }
+	// Equipar o jogador com "weapon_fists"
+	UseWeapon(client, "weapon_fists");
+	FakeClientCommandEx(client, "use weapon_fists");
+	CreateTimer(0.1, SetMaxSpeedInfectedStrip, client, TIMER_FLAG_NO_MAPCHANGE);
 }
 
 
