@@ -58,7 +58,7 @@ int loadedMaps;
 #define INPUT_ZOMBIE_VICTORY "InputDespVictory"
 
 ConVar g_EnabledCvar;
-ConVar g_ConfigFileCvar;
+ConVar g_ConfigWeaponsCvar;
 ConVar g_RoundTimeCvar;
 ConVar g_RespawnTimeCvar;
 ConVar g_RatioCvar;
@@ -67,7 +67,6 @@ ConVar g_Infected_Speed;
 ConVar g_Infected_Slow;
 ConVar g_Infected_Slow_Time;
 ConVar g_Infected_Damage;
-ConVar g_Zombie_Model;
 
 ConVar g_TeambalanceAllowedCvar;
 ConVar g_TeamsUnbalanceLimitCvar;
@@ -127,9 +126,9 @@ public void OnPluginStart()
 		"Whether or not Fistful of Zombies is enabled",
 		FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
-	g_ConfigFileCvar = CreateConVar(
-		"foz_config", "configs/fistful_of_zombies_weapons.txt",
-		"Location of the Fistful of Zombies configuration file",
+	g_ConfigWeaponsCvar = CreateConVar(
+		"foz_config_weapons", "configs/fistful_of_zombies_weapons.txt",
+		"Weapon loot configuration file location",
 		0);
 
 	g_RoundTimeCvar = CreateConVar(
@@ -171,11 +170,6 @@ public void OnPluginStart()
 		"foz_infected_damage", "0.45",
 		"Adjusts the damage multiplier for infected players, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.",
 		FCVAR_NOTIFY, true, 0.10, true, 1.0);
-
-	g_Zombie_Model = CreateConVar(
-		"foz_zombie_model", "models/zombies/fof_zombie.mdl",
-		"Defines the model path for the infected players.",
-		FCVAR_NOTIFY);
 
 	g_TeambalanceAllowedCvar = FindConVar("fof_sv_teambalance_allowed");
 	g_TeamsUnbalanceLimitCvar = FindConVar("mp_teams_unbalance_limit");
@@ -273,14 +267,11 @@ public void OnMapStart()
 	PrecacheSound("vehicles/train/whistle.wav", true);
 	PrecacheSound("player/fallscream1.wav", true);
 
-	char sZombieModel[MAX_KEY_LENGTH];
-	g_Zombie_Model.GetString(sZombieModel, sizeof(sZombieModel));
-
 	g_VigilanteModelIndex = PrecacheModel("models/playermodels/player1.mdl");
 	g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
 	g_BandidoModelIndex = PrecacheModel("models/playermodels/bandito.mdl");
 	g_RangerModelIndex = PrecacheModel("models/playermodels/frank.mdl");
-	g_ZombieModelIndex = PrecacheModel(sZombieModel);
+	g_ZombieModelIndex = PrecacheModel("models/fof_skins/players/infected/infected.mdl");
 
 	// initial setup
 	ConvertSpawns();
@@ -903,9 +894,9 @@ Action Command_Reload(int caller, int args)
 
 void InitializeFistfulOfZombies()
 {
-    // load configuration
+    // load configuration weapons
     char file[PLATFORM_MAX_PATH];
-    g_ConfigFileCvar.GetString(file, sizeof(file));
+    g_ConfigWeaponsCvar.GetString(file, sizeof(file));
 
     KeyValues config = LoadFistfulOfZombiesFile(file);
 
