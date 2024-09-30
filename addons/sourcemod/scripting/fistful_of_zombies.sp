@@ -67,6 +67,7 @@ ConVar g_Infected_Speed;
 ConVar g_Infected_Slow;
 ConVar g_Infected_Slow_Time;
 ConVar g_Infected_Damage;
+ConVar g_Human_Damage;
 
 ConVar g_TeambalanceAllowedCvar;
 ConVar g_TeamsUnbalanceLimitCvar;
@@ -168,8 +169,13 @@ public void OnPluginStart()
 
 	g_Infected_Damage = CreateConVar(
 		"foz_infected_damage", "0.45",
-		"Adjusts the damage multiplier for infected players, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.",
+		"Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.",
 		FCVAR_NOTIFY, true, 0.10, true, 1.0);
+
+	g_Human_Damage = CreateConVar(
+		"foz_human_damage", "1.5",
+		"Set the damage multiplier that infected players deal to humans. (1.0 is the game standart and 2.0 means double damage)",
+		FCVAR_NOTIFY, true, 1.0, true, 2.0);
 
 	g_TeambalanceAllowedCvar = FindConVar("fof_sv_teambalance_allowed");
 	g_TeamsUnbalanceLimitCvar = FindConVar("mp_teams_unbalance_limit");
@@ -654,15 +660,27 @@ public Action Infected_Damage_Filter(int victim, int &attacker, int &inflictor, 
     // Reduzir o dano se não for um tiro na cabeça
     if (IsHuman(attacker) && IsZombie(victim))
     {
-		if (hitgroup != 1)
-		{
-			float InfecteDamage = g_Infected_Damage.FloatValue;
-
-			damage *= InfecteDamage;
-		}
+        if (hitgroup != 1)
+        {
+            float InfecteDamage = g_Infected_Damage.FloatValue;
+            damage *= InfecteDamage;
+        }
     }
+    
+    if (IsZombie(attacker) && IsHuman(victim))
+    {
+        float HumanDamage = g_Human_Damage.FloatValue;
+
+        // Verifica se o tipo de dano é DMG_CLUB
+        if (damagetype & DMG_CLUB)
+        {
+            damage *= HumanDamage;  // Multiplica o dano se for DMG_CLUB
+        }
+    }
+    
     return Plugin_Changed;
 }
+
 
 public void OnMapInit(const char[] mapName)
 {
