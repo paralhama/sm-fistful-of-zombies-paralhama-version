@@ -7,13 +7,12 @@ If the infected player receives damage from any of the items on this list, the p
 - Infected players can still pick up some weapons, even though a function is in place to prevent this and remove the weapon from the player. This creates an issue where, when an infected player picks up a weapon, it is removed from both the player and the map, reducing weapon availability for the human team. The solution was to drop the removed weapon at the position of the infected player who picked it up.
 - Replaced all small TNT barrels and some props with large TNT barrels. Now, all `prop_physics_respawnable` that contain the models `FurnitureDresser`, `wood_crate`, and `barrel1_explosive` are converted to `barrel2_explosive`.
 - Commands added on `fof_zombies_config.cfg`
-  - `foz_infected_damage`: Adjusts the damage multiplier for infected players, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0.
+  - `foz_infected_damage`: Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.
   - `foz_infected_slow`: Change the max speed for an infected player when receive damage.
   - `foz_infected_slow_time`: Seconds that the infected player will be slowed when taking damage.
   - `foz_infected_speed`: Change the max speed for a infected player.
-  - `foz_zombie_model`: Change the model of infected players, the default is 'models/zombies/fof_zombie.mdl'. (It is recommended to restart the server when modifying this command.) 
 - The plugin [Map Lighting Changer](https://github.com/NockyCZ/Map-Lighting-Changer) made by [Nocky](https://github.com/NockyCZ) has been unified with this plugin, and now it is also possible to turn any map into a night version, making it darker. **(Some maps, like "fof_overtop" and "fof_cripplecreek", may produce unexpected results. While it can be a tedious process, it's recommended to test each map individually and identify the ones that work best for your preferences.)**
-### edit the CFG to make any map nighttime in `addons\sourcemod\configs\fistful_of_zombies_maps.cfg
+### edit the CFG to make any map night time in `addons\sourcemod\configs\fistful_of_zombies_maps.cfg
 ```c++
 // b - darkest
 // m - normal (Default)
@@ -57,7 +56,9 @@ If the infected player receives damage from any of the items on this list, the p
 
 Fistful of Zombies; a custom zombie survival game mode for Fistful of Frags.
 
-![fof_fistful](/.github/foz-screenshot-1.jpg?raw=true "Screnshot 1")
+![image](https://github.com/user-attachments/assets/4621e29c-ce04-4643-981a-883646b5d46a)
+![image](https://github.com/user-attachments/assets/f4085e93-de0f-487a-a551-8912a8cd6872)
+
 
 
 
@@ -100,11 +101,10 @@ NOTE: All commands can be run from the in-game chat by replacing `sm_` with `!` 
 | `foz_respawn_time` | integer | 0-999 | How long zombies have to wait before respawning in Fistful of Zombies |
 | `foz_ratio` | float | 0-1 | Percentage of players that start as human. |
 | `foz_infection` | float | 0-1 | Chance that a human will be infected when punched by a zombie.  Value is scaled such that more human players increase the chance |
-| `foz_infected_damage` | float | 0.1-1.0 | Adjusts the damage multiplier for infected players, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0! |
+| `foz_infected_damage` | float | 0.1-1.0 | Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.! |
 | `foz_infected_slow` | float | 0-320.0 | Change the max speed for an infected player when receive damage. |
 | `foz_infected_slow_time` | float | 0.5-2.0 | Seconds that the infected player will be slowed when taking damage. |
 | `foz_infected_speed` | float | 255.0-320.0 | Change the max speed for a infected player. |
-| `foz_zombie_model` | string | file path | Changes the model path for infected players |
 
 ## Mapping
 The plugin is designed in such a way that it can run on any shootout map.  However due to unintended map exploits they may not be balanced for this game mode.  Some things to keep in mind if you want to build your own maps for this game mode:
