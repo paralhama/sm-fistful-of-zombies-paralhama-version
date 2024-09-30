@@ -12,7 +12,7 @@ If the infected player receives damage from any of the items on this list, the p
   - `foz_infected_slow_time`: Seconds that the infected player will be slowed when taking damage.
   - `foz_infected_speed`: Change the max speed for a infected player.
 - The plugin [Map Lighting Changer](https://github.com/NockyCZ/Map-Lighting-Changer) made by [Nocky](https://github.com/NockyCZ) has been unified with this plugin, and now it is also possible to turn any map into a night version, making it darker. **(Some maps, like "fof_overtop" and "fof_cripplecreek", may produce unexpected results. While it can be a tedious process, it's recommended to test each map individually and identify the ones that work best for your preferences.)**
-### edit the CFG to make any map nighttime in `addons\sourcemod\configs\fistful_of_zombies_maps.cfg
+### edit the CFG to make any map night time in `addons\sourcemod\configs\fistful_of_zombies_maps.cfg
 ```c++
 // b - darkest
 // m - normal (Default)
