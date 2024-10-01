@@ -21,9 +21,6 @@
 #undef REQUIRE_EXTENSIONS
 #tryinclude <steamworks>
 
-#pragma semicolon 1
-#pragma newdecls required
-
 #define MAX_MAPS 64
 
 char Path[PLATFORM_MAX_PATH], MapName[MAX_MAPS][128], LightValue[MAX_MAPS][128];
@@ -51,6 +48,7 @@ int loadedMaps;
 #define ON_NO_HUMAN_ALIVE "OnNoVigAlive"
 #define INPUT_HUMAN_VICTORY "InputVigVictory"
 
+#define COOLDOWN_TIME 0.6 // cooldown attack infected
 #define TEAM_ZOMBIE 3  // Desperados
 #define TEAM_ZOMBIE_STR "3"
 #define INFO_PLAYER_ZOMBIE "info_player_desperado"
@@ -92,6 +90,14 @@ int g_DesperadoModelIndex;
 int g_BandidoModelIndex;
 int g_RangerModelIndex;
 int g_ZombieModelIndex;
+
+new Float:g_flLastAttack[MAXPLAYERS+1]; // Armazena o tempo do último ataque primário
+new Float:g_flLastAttack2[MAXPLAYERS+1]; // Armazena o tempo do último ataque secundário
+new bool:g_SoundAttack[MAXPLAYERS+1] = {false, ...};
+new Float:currentTime;
+
+new g_PVMid[MAXPLAYERS+1]; // Predicted ViewModel ID's
+new g_iClawModel;    // Custom ViewModel index
 
 // a priority scaling for assigning to the human team;  a higher value has a
 // higher priority for joining humans.
@@ -277,7 +283,8 @@ public void OnMapStart()
 	g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
 	g_BandidoModelIndex = PrecacheModel("models/playermodels/bandito.mdl");
 	g_RangerModelIndex = PrecacheModel("models/playermodels/frank.mdl");
-	g_ZombieModelIndex = PrecacheModel("models/fof_skins/players/infected/infected.mdl");
+	g_ZombieModelIndex = PrecacheModel("models/fof_skins/players/infected/infected.mdl"); // Infected players model
+	g_iClawModel = PrecacheModel("models/fof_skins/players/infected/arms/infected_fists.mdl"); // infected claws view model
 
 	// initial setup
 	ConvertSpawns();
@@ -289,6 +296,23 @@ public void OnMapStart()
 
 	CreateTimer(1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 	CreateTimer(0.001, Timer_SetConvars, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public OnClientPostAdminCheck(client){
+    SDKHook(client, SDKHook_WeaponSwitchPost, OnClientWeaponSwitchPost);    
+}
+
+public OnClientWeaponSwitchPost(client, wpnid)
+{
+    
+    decl String:szWpn[64];
+    GetEntityClassname(wpnid,szWpn,sizeof(szWpn));
+    
+    if(StrEqual(szWpn, "weapon_fists")  && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+	{
+        SetEntProp(wpnid, Prop_Send, "m_nModelIndex", 0);
+        SetEntProp(g_PVMid[client], Prop_Send, "m_nModelIndex", g_iClawModel);
+    }
 }
 
 public void OnConfigsExecuted()
@@ -306,9 +330,39 @@ void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
 	if (!IsEnabled()) return;
 
+	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	if(IsZombie(client))
+	{
+		g_PVMid[client] = Weapon_GetViewModelIndex2(client, -1);
+    }
+
 	SetDefaultConVars();
 	int userid = event.GetInt("userid");
 	RequestFrame(PlayerSpawnDelay, userid);
+}
+
+// Get model index and prevent server from crash
+Weapon_GetViewModelIndex2(client, sIndex)
+{
+	if(IsZombie(client))
+	{
+		while ((sIndex = FindEntityByClassname2(sIndex, "predicted_viewmodel")) != -1)
+		{
+			new Owner = GetEntPropEnt(sIndex, Prop_Send, "m_hOwner");
+			
+			if (Owner != client)
+				continue;
+			
+			return sIndex;
+		}
+	}
+	return -1;
+}
+// Get entity name
+FindEntityByClassname2(sStartEnt, String:szClassname[])
+{
+    while (sStartEnt > -1 && !IsValidEntity(sStartEnt)) sStartEnt--;
+    return FindEntityByClassname(sStartEnt, szClassname);
 }
 
 void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
@@ -832,26 +886,33 @@ Action SoundCallback(int clients[MAXPLAYERS], int &numClients,
             // change to zombie footsteps
             if (StrContains(sample, "player/footsteps") == 0)
             {
-                Format(sample, sizeof(sample), "npc/zombie/foot%d.wav",
-                        GetRandomInt(1, 3));
+                Format(sample, sizeof(sample), "npc/zombie/foot%d.wav", GetRandomInt(1, 3));
                 return Plugin_Changed;
             }
 
             // change zombie punching
             if (StrContains(sample, "weapons/fists/fists_punch") == 0)
             {
-                Format(sample, sizeof(sample), "npc/zombie/claw_strike%d.wav",
-                        GetRandomInt(1, 3));
-                return Plugin_Changed;
+				g_SoundAttack[entity] = true;
+				Format(sample, sizeof(sample), "npc/zombie/claw_strike%d.wav", GetRandomInt(1, 3));
+				return Plugin_Changed;
             }
+			else
+			{
+				g_SoundAttack[entity] = false;
+			}
 
             // change zombie punch missing
             if (StrContains(sample, "weapons/fists/fists_miss") == 0)
             {
-                Format(sample, sizeof(sample), "npc/zombie/claw_miss%d.wav",
-                        GetRandomInt(1, 2));
-                return Plugin_Changed;
+				g_SoundAttack[entity] = true;
+				Format(sample, sizeof(sample), "npc/zombie/claw_miss%d.wav", GetRandomInt(1, 2));
+				return Plugin_Changed;
             }
+			else
+			{
+				g_SoundAttack[entity] = false;
+			}
 
             // change zombie death sound
             if (StrContains(sample, "player/voice/pain/pl_death") == 0 ||
@@ -859,20 +920,74 @@ Action SoundCallback(int clients[MAXPLAYERS], int &numClients,
                     StrContains(sample, "player/voice4/pain/pl_death") == 0 ||
                     StrContains(sample, "npc/mexican/death") == 0)
             {
-                Format(sample, sizeof(sample), "npc/zombie/zombie_die%d.wav",
-                        GetRandomInt(1, 3));
+                Format(sample, sizeof(sample), "npc/zombie/zombie_die%d.wav", GetRandomInt(1, 3));
                 return Plugin_Changed;
             }
 
             if (StrContains(sample, "player/voice") == 0 ||
                     StrContains(sample, "npc/mexican") == 0)
             {
-                Format(sample, sizeof(sample), "npc/zombie/moan-%02d.wav",
-                        GetRandomInt(1, 14));
+                Format(sample, sizeof(sample), "npc/zombie/moan-%02d.wav", GetRandomInt(1, 14));
                 return Plugin_Changed;
             }
         }
     }
+    return Plugin_Continue;
+}
+
+public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon)
+{
+    // Pega o tempo atual do jogo (Declara a variável Float no escopo correto)
+    currentTime = GetGameTime();
+
+    // Verifica o ataque primário (IN_ATTACK)
+    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    {
+        // Se o tempo desde o último ataque for menor que o cooldown, cancela o ataque
+        if (currentTime - g_flLastAttack[client] < COOLDOWN_TIME)
+        {
+			buttons &= ~IN_ATTACK; // Desativa o ataque
+			g_flLastAttack2[client] = currentTime;
+        }
+        else
+        {
+			// Se já passou o tempo de cooldown, atualiza o tempo do último ataque
+			g_flLastAttack[client] = currentTime;
+			if (g_SoundAttack[client])
+			{
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 5);
+			}
+			else
+			{
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 0);
+			}
+        }
+    }
+
+    // Verifica o ataque secundário (IN_ATTACK2)
+    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    {
+        // Se o tempo desde o último ataque secundário for menor que o cooldown, cancela o ataque
+        if (currentTime - g_flLastAttack2[client] < COOLDOWN_TIME)
+        {
+			buttons &= ~IN_ATTACK2; // Desativa o ataque secundário
+			g_flLastAttack[client] = currentTime;
+        }
+        else
+        {
+			// Se já passou o tempo de cooldown, atualiza o tempo do último ataque secundário
+			g_flLastAttack2[client] = currentTime;
+			if (g_SoundAttack[client])
+			{
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 4);
+			}
+			else
+			{
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 0);
+			}
+        }
+    }
+
     return Plugin_Continue;
 }
 
