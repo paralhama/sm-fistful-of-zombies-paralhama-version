@@ -99,6 +99,11 @@ new Float:currentTime;
 new g_PVMid[MAXPLAYERS+1]; // Predicted ViewModel ID's
 new g_iClawModel;    // Custom ViewModel index
 
+
+// ######### GLOW WEAPONS ##########
+Handle AddGlowServerSDKCall;
+// ######### GLOW WEAPONS ##########
+
 // a priority scaling for assigning to the human team;  a higher value has a
 // higher priority for joining humans.
 int g_HumanPriority[MAXPLAYERS+1] = {0, ...};
@@ -206,8 +211,38 @@ public void OnPluginStart()
 
 	SetDefaultConVars();
 	InitializeFistfulOfZombies();
+
+// ######### GLOW WEAPONS ##########
+	Handle hConf = LoadGameConfigFile("glow_weapons_fof_zombies");
+
+	if (hConf == null)
+		SetFailState("hConf == null");
+
+	StartPrepSDKCall(SDKCall_Entity); //SDKCall_Raw
+	PrepSDKCall_SetFromConf(hConf, SDKConf_Signature, "Glow");
+	PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+	AddGlowServerSDKCall = EndPrepSDKCall();
+
+	if (AddGlowServerSDKCall == INVALID_HANDLE)
+		SetFailState("Failed to create Call for AddGlowServer");
+// ######### GLOW WEAPONS ##########
+
 }
 
+// ######### GLOW WEAPONS ##########
+public void AddGlowServer(int entity)
+{
+    SDKCall(AddGlowServerSDKCall, entity);
+}
+
+Action WeaponGlow(Handle timer, any entity)
+{
+	AddGlowServer(entity);
+
+	return Plugin_Handled;
+}
+
+// ######### GLOW WEAPONS ##########
 
 public void OnClientPutInServer(int client)
 {
@@ -572,25 +607,21 @@ Action Timer_Repeat(Handle timer)
 
 Action Hook_OnWeaponCanUse(int client, int weapon)
 {
-    if (!IsEnabled()) return Plugin_Continue;
+	if (!IsEnabled()) return Plugin_Continue;
 
-    // block zombies from picking up guns
-    if (IsZombie(client))
-    {
-        char class[MAX_KEY_LENGTH];
-        GetEntityClassname(weapon, class, sizeof(class));
+	char class[MAX_KEY_LENGTH];
+	GetEntityClassname(weapon, class, sizeof(class));
 
-        if (!StrEqual(class, "weapon_fists"))
-        {
-            EmitSoundToClient(client, SOUND_NOPE);
-            PrintCenterText(client, "Zombies Can Not Use Guns");
-            PrintToChat(client, "Zombies Can Not Use Guns");
+	// block zombies from picking up guns
+	if (IsZombie(client) && !StrEqual(class, "weapon_fists"))
+	{
+		EmitSoundToClient(client, SOUND_NOPE);
+		PrintToChat(client, "Zombies Can Not Use Guns");
 
-            return Plugin_Handled;
-        }
-    }
+		return Plugin_Handled;
+	}
 
-    return Plugin_Continue;
+	return Plugin_Continue;
 }
 
 
@@ -1163,89 +1194,139 @@ void ConvertSpawns()
 
 void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 {
-    char loot[MAX_KEY_LENGTH];
-    int count = 0;
-    int entity = INVALID_ENT_REFERENCE;
-    int converted = INVALID_ENT_REFERENCE;
-    float origin[3], angles[3];
+	char loot[MAX_KEY_LENGTH];
+	int count = 0;
+	int entity = INVALID_ENT_REFERENCE;
+	int converted = INVALID_ENT_REFERENCE;
+	float origin[3], angles[3];
 
-    // Process item_whiskey entities
-    while((entity = FindEntityByClassname(entity, "item_whiskey")) != INVALID_ENT_REFERENCE)
-    {
-        // Get original's position and remove it
-        Entity_GetAbsOrigin(entity, origin);
-        Entity_GetAbsAngles(entity, angles);
-        Entity_Kill(entity);
+	// Process item_whiskey entities
+	while((entity = FindEntityByClassname(entity, "item_whiskey")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		Entity_GetAbsOrigin(entity, origin);
+		Entity_GetAbsAngles(entity, angles);
+		Entity_Kill(entity);
 
-        // Spawn a replacement at the same position
-        GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
-        if (StrEqual(loot, "nothing", false)) continue;
+		// Spawn a replacement at the same position
+		GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
+		if (StrEqual(loot, "nothing", false)) continue;
 
-        converted = Weapon_Create(loot, origin, angles);
-        Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+		converted = Weapon_Create(loot, origin, angles);
+		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+		count++;
+	}
 
-        count++;
-    }
+	// Reset entity reference for processing fof_horse entities
+	entity = INVALID_ENT_REFERENCE;
+	// Process fof_horse entities
+	while((entity = FindEntityByClassname(entity, "fof_horse")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		Entity_GetAbsOrigin(entity, origin);
+		Entity_GetAbsAngles(entity, angles);
+		Entity_Kill(entity);
 
-    // Reset entity reference for processing fof_horse entities
-    entity = INVALID_ENT_REFERENCE;
-    // Process fof_horse entities
-    while((entity = FindEntityByClassname(entity, "fof_horse")) != INVALID_ENT_REFERENCE)
-    {
-        // Get original's position and remove it
-        Entity_GetAbsOrigin(entity, origin);
-        Entity_GetAbsAngles(entity, angles);
-        Entity_Kill(entity);
+		// Spawn a replacement at the same position
+		GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
+		if (StrEqual(loot, "nothing", false)) continue;
 
-        // Spawn a replacement at the same position
-        GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
-        if (StrEqual(loot, "nothing", false)) continue;
+		converted = Weapon_Create(loot, origin, angles);
+		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+		count++;
+	}
 
-        converted = Weapon_Create(loot, origin, angles);
-        Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+	// Process npc_horse entities
+	entity = INVALID_ENT_REFERENCE;
+	while((entity = FindEntityByClassname(entity, "npc_horse")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		Entity_GetAbsOrigin(entity, origin);
+		Entity_GetAbsAngles(entity, angles);
+		Entity_Kill(entity);
 
-        count++;
-    }
+		// Spawn a replacement at the same position
+		GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
+		if (StrEqual(loot, "nothing", false)) continue;
 
-    // Process npc_horse entities
-    while((entity = FindEntityByClassname(entity, "npc_horse")) != INVALID_ENT_REFERENCE)
-    {
-        // Get original's position and remove it
-        Entity_GetAbsOrigin(entity, origin);
-        Entity_GetAbsAngles(entity, angles);
-        Entity_Kill(entity);
+		converted = Weapon_Create(loot, origin, angles);
+		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+		count++;
+	}
 
-        // Spawn a replacement at the same position
-        GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
-        if (StrEqual(loot, "nothing", false)) continue;
+	// Reset entity reference for processing fof_crate entities
+	entity = INVALID_ENT_REFERENCE;
+	// Process fof_crate entities
+	while((entity = FindEntityByClassname(entity, "fof_crate*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		Entity_GetAbsOrigin(entity, origin);
+		Entity_GetAbsAngles(entity, angles);
+		Entity_Kill(entity);
 
-        converted = Weapon_Create(loot, origin, angles);
-        Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+		// Spawn a replacement at the same position
+		GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
+		if (StrEqual(loot, "nothing", false)) continue;
 
-        count++;
-    }
+		converted = Weapon_Create(loot, origin, angles);
+		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+		count++;
+	}
 
-    // Reset entity reference for processing fof_crate entities
-    entity = INVALID_ENT_REFERENCE;
-    // Process fof_crate entities
-    while((entity = FindEntityByClassname(entity, "fof_crate*")) != INVALID_ENT_REFERENCE)
-    {
-        // Get original's position and remove it
-        Entity_GetAbsOrigin(entity, origin);
-        Entity_GetAbsAngles(entity, angles);
-        Entity_Kill(entity);
+	// Apply glow to weapons
+	entity = INVALID_ENT_REFERENCE;
+	// Process weapons entities
+	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		CreateTimer(5.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
+	}
 
-        // Spawn a replacement at the same position
-        GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
-        if (StrEqual(loot, "nothing", false)) continue;
+	// Apply glow to weapons
+	entity = INVALID_ENT_REFERENCE;
+	// Process weapons entities
+	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		CreateTimer(10.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
+	}
 
-        converted = Weapon_Create(loot, origin, angles);
-        Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
+	// Apply glow to weapons
+	entity = INVALID_ENT_REFERENCE;
+	// Process weapons entities
+	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		CreateTimer(15.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
+	}
 
-        count++;
-    }
+	// Apply glow to weapons
+	entity = INVALID_ENT_REFERENCE;
+	// Process weapons entities
+	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		CreateTimer(20.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
+	}
+
+	// Apply glow to weapons
+	entity = INVALID_ENT_REFERENCE;
+	// Process weapons entities
+	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		CreateTimer(30.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
+	}
+
+	// Apply glow to weapons
+	entity = INVALID_ENT_REFERENCE;
+	// Process weapons entities
+	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		// Get original's position and remove it
+		CreateTimer(40.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
+	}
 }
-
 
 // spawn the fof_teamplay entity that will control the game's logic.
 int SpawnZombieTeamplayEntity()
@@ -1425,6 +1506,7 @@ void StripWeapons(int client)
 		{
 			TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
 			DispatchSpawn(dropped_weapon);
+			AddGlowServer(dropped_weapon);
 		}
 
 		// Remover a arma do jogador
