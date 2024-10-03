@@ -121,7 +121,7 @@ public Plugin myinfo =
 {
     name = PLUGIN_NAME,
     author = "CrimsonTautology, Paralhama and Nocky",
-    description = "Zombie Survival for Fistful of Frags. New features added by Paralhama + Map Lighting Changer by Nocky",
+    description = "Zombie Survival for Fistful of Frags. New features added by Paralhama: Map Lighting Changer by Nocky + Glow enable on weapons by Backwards and other cool things :)",
     version = PLUGIN_VERSION,
     url = "https://github.com/paralhama/sm-fistful-of-zombies"
 };
