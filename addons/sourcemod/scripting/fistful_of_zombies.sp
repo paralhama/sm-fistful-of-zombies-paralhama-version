@@ -9,7 +9,7 @@
  *
  */
 #pragma semicolon 1
-
+#pragma newdecls required
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
@@ -91,13 +91,14 @@ int g_BandidoModelIndex;
 int g_RangerModelIndex;
 int g_ZombieModelIndex;
 
-new Float:g_flLastAttack[MAXPLAYERS+1]; // Armazena o tempo do último ataque primário
-new Float:g_flLastAttack2[MAXPLAYERS+1]; // Armazena o tempo do último ataque secundário
-new bool:g_SoundAttack[MAXPLAYERS+1] = {false, ...};
-new Float:currentTime;
+float g_flLastAttack[MAXPLAYERS+1]; // Armazena o tempo do último ataque primário
+float g_flLastAttack2[MAXPLAYERS+1]; // Armazena o tempo do último ataque secundário
+bool g_SoundAttack[MAXPLAYERS+1] = {false, ...}; // Usando a nova sintaxe para booleanos
+float currentTime; // Declarando uma variável de ponto flutuante corretamente
 
-new g_PVMid[MAXPLAYERS+1]; // Predicted ViewModel ID's
-new g_iClawModel;    // Custom ViewModel index
+int g_PVMid[MAXPLAYERS+1]; // Predicted ViewModel ID's
+int g_iClawModel;    // Custom ViewModel index
+
 
 
 // ######### GLOW WEAPONS ##########
@@ -192,6 +193,7 @@ public void OnPluginStart()
 	g_TeamsUnbalanceLimitCvar = FindConVar("mp_teams_unbalance_limit");
 	g_AutoteambalanceCvar = FindConVar("mp_autoteambalance");
 
+	HookEvent("hatshot", OnHatShot, EventHookMode_Pre);
 	HookEvent("player_spawn", Event_PlayerSpawn);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("round_start", Event_RoundStart);
@@ -213,7 +215,7 @@ public void OnPluginStart()
 	InitializeFistfulOfZombies();
 
 // ######### GLOW WEAPONS ##########
-	Handle hConf = LoadGameConfigFile("glow_weapons_fof_zombies");
+	Handle hConf = LoadGameConfigFile("gamedata_fistful_of_zombies");
 
 	if (hConf == null)
 		SetFailState("hConf == null");
@@ -237,12 +239,28 @@ public void AddGlowServer(int entity)
 
 Action WeaponGlow(Handle timer, any entity)
 {
-	AddGlowServer(entity);
-
-	return Plugin_Handled;
+    // Verifica se a entidade é válida antes de prosseguir
+    if (IsValidEntity(entity))
+    {
+        AddGlowServer(entity);
+        return Plugin_Handled;
+    }
+    
+    // Caso a entidade não seja válida, retornar Plugin_Continue ou outro valor apropriado
+    return Plugin_Continue;
 }
 
 // ######### GLOW WEAPONS ##########
+
+
+
+public Action OnHatShot(Handle event, const char[] name, bool dontBroadcast)
+{
+	SetEventBroadcast(event, true);
+	return Plugin_Changed;
+}
+
+
 
 public void OnClientPutInServer(int client)
 {
@@ -333,14 +351,14 @@ public void OnMapStart()
 	CreateTimer(0.001, Timer_SetConvars, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
-public OnClientPostAdminCheck(client){
+public void OnClientPostAdminCheck(int client){
     SDKHook(client, SDKHook_WeaponSwitchPost, OnClientWeaponSwitchPost);    
 }
 
-public OnClientWeaponSwitchPost(client, wpnid)
+public void OnClientWeaponSwitchPost(int client, int wpnid)
 {
     
-    decl String:szWpn[64];
+    char szWpn[MAX_KEY_LENGTH];
     GetEntityClassname(wpnid,szWpn,sizeof(szWpn));
     
     if(StrEqual(szWpn, "weapon_fists")  && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
@@ -365,7 +383,7 @@ void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
 	if (!IsEnabled()) return;
 
-	new client = GetClientOfUserId(GetEventInt(event, "userid"));
+	int client = GetClientOfUserId(GetEventInt(event, "userid"));
 	if(IsZombie(client))
 	{
 		g_PVMid[client] = Weapon_GetViewModelIndex2(client, -1);
@@ -373,17 +391,57 @@ void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 
 	SetDefaultConVars();
 	int userid = event.GetInt("userid");
+	CreateTimer(0.5, RemoveHatTimer, _, TIMER_REPEAT);
 	RequestFrame(PlayerSpawnDelay, userid);
 }
 
+stock int GetSO()
+{
+     Handle hConf = LoadGameConfigFile("gamedata_fistful_of_zombies");
+     int WindowsOrLinux = GameConfGetOffset(hConf, "WindowsOrLinux");
+     CloseHandle(hConf);
+     return WindowsOrLinux; // 1 para Windows; 2 para Linux
+}
+
+public Action RemoveHatTimer(Handle timer, any iGrenade)
+{
+	for(int i = 0 + 1;i < MaxClients+1;i++)
+	{
+		if(IsValidEntity(i) && IsValidEdict(i))
+		{
+			if(IsPlayerAlive(i) && IsZombie(i))
+				RemoveHat(i);
+		}
+	}
+	
+	return Plugin_Continue;
+}
+
+void RemoveHat(int client)
+{
+	int SO = GetSO();
+
+	int hatlessOffset = 0;
+	
+	// Verifica se o sistema é Windows ou Linux
+	if (SO == 1)
+		hatlessOffset = 4980;
+	else
+		hatlessOffset = 5000;
+		
+	SetEntData(client, hatlessOffset, 0, 4, true);
+	// SetEntProp(client, Prop_Data, "m_nBody", 1); //Set the BodyGroup player model
+	SetEntProp(client, Prop_Send, "m_nHitboxSet", 1);
+}
+
 // Get model index and prevent server from crash
-Weapon_GetViewModelIndex2(client, sIndex)
+int Weapon_GetViewModelIndex2(int client, int sIndex)
 {
 	if(IsZombie(client))
 	{
 		while ((sIndex = FindEntityByClassname2(sIndex, "predicted_viewmodel")) != -1)
 		{
-			new Owner = GetEntPropEnt(sIndex, Prop_Send, "m_hOwner");
+			int Owner = GetEntPropEnt(sIndex, Prop_Send, "m_hOwner");
 			
 			if (Owner != client)
 				continue;
@@ -394,7 +452,7 @@ Weapon_GetViewModelIndex2(client, sIndex)
 	return -1;
 }
 // Get entity name
-FindEntityByClassname2(sStartEnt, String:szClassname[])
+int FindEntityByClassname2(int sStartEnt, const char[] szClassname)
 {
     while (sStartEnt > -1 && !IsValidEntity(sStartEnt)) sStartEnt--;
     return FindEntityByClassname(sStartEnt, szClassname);
@@ -966,7 +1024,7 @@ Action SoundCallback(int clients[MAXPLAYERS], int &numClients,
     return Plugin_Continue;
 }
 
-public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:angles[3], &weapon)
+public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3], int& weapon)
 {
     // Pega o tempo atual do jogo (Declara a variável Float no escopo correto)
     currentTime = GetGameTime();
@@ -1273,6 +1331,11 @@ void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 		count++;
 	}
 
+	/*
+	For some reason, some weapons around the map do not have glow activated when using the 'WeaponGlow' function. 
+	After many attempts to fix this, the only 'solution' that worked was starting the same 'CreateTimer' with different intervals.
+	*/
+
 	// Apply glow to weapons
 	entity = INVALID_ENT_REFERENCE;
 	// Process weapons entities
@@ -1523,11 +1586,16 @@ void StripWeapons(int client)
 
 Action SetMaxSpeedInfectedStrip(Handle timer, int client)
 {
-	float MaxSpeed = g_Infected_Speed.FloatValue;
+    // Verifica se a entidade é válida, o cliente está conectado e está vivo
+    if (IsValidEntity(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    {
+        float MaxSpeed = g_Infected_Speed.FloatValue;
 
-	SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", MaxSpeed ); 
-	ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
-	return Plugin_Handled;
+        SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", MaxSpeed);
+        ChangeEdictState(client, GetEntSendPropOffs(client, "m_flMaxspeed"));
+    }
+
+    return Plugin_Handled;
 }
 
 void EmitZombieYell(int client)
