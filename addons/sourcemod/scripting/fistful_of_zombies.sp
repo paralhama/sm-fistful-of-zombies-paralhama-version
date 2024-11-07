@@ -227,11 +227,24 @@ public void OnPluginStart()
 
 	if (AddGlowServerSDKCall == INVALID_HANDLE)
 		SetFailState("Failed to create Call for AddGlowServer");
+
+	CreateTimer(0.5, EnableWeaponsGlowOnMap, _, TIMER_REPEAT);
 // ######### GLOW WEAPONS ##########
 
 }
 
 // ######### GLOW WEAPONS ##########
+
+public Action EnableWeaponsGlowOnMap(Handle timer, any iGrenade)
+{
+	int weapon = INVALID_ENT_REFERENCE;
+
+	while((weapon = FindEntityByClassname(weapon, "weapon_*")) != INVALID_ENT_REFERENCE)
+	{
+		AddGlowServer(weapon);
+	}
+}
+
 public void AddGlowServer(int entity)
 {
     SDKCall(AddGlowServerSDKCall, entity);
@@ -276,6 +289,7 @@ public void OnClientPutInServer(int client)
 
 public void OnMapStart()
 {
+	RemoveCrates();
 	CreateTimer(1.0, ChangeLight);
 	if (!IsEnabled()) return;
 
@@ -460,20 +474,21 @@ int FindEntityByClassname2(int sStartEnt, const char[] szClassname)
 
 void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
-    if (!IsEnabled()) return;
+	if (!IsEnabled()) return;
 
-    int userid = event.GetInt("userid");
-    int client = GetClientOfUserId(userid);
+	int userid = event.GetInt("userid");
+	int client = GetClientOfUserId(userid);
 
-    // a dead human becomes a zombie
-    if (IsHuman(client))
-    {
-        // announce the death
-        PrintCenterTextAll("%N has turned...", client);
-        EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
+	// a dead human becomes a zombie
+	if (IsHuman(client))
+	{
+		// announce the death
+		PrintCenterTextAll("%N has turned...", client);
+		EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
 
-        RequestFrame(BecomeZombieDelay, userid);
-    }
+		RequestFrame(BecomeZombieDelay, userid);
+	}
+	RemoveCrates();
 }
 
 void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
@@ -484,7 +499,7 @@ void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
     CreateTimer(10.0, Timer_EndGrace, TIMER_FLAG_NO_MAPCHANGE);
 
     WeaponSpawn(g_LootTable, g_LootTotalWeight);
-    //RemoveCrates();
+    RemoveCrates();
     RemoveTeamplayEntities();
     RandomizeTeams();
     SetDefaultConVars();
@@ -1205,10 +1220,10 @@ void SetDefaultConVars()
     g_AutoteambalanceCvar.SetInt(0, false, false);
 }
 
-//void RemoveCrates()
-//{
-//    Entity_KillAllByClassName("fof_crate*");
-//}
+void RemoveCrates()
+{
+    Entity_KillAllByClassName("fof_crate*");
+}
 
 void RemoveTeamplayEntities()
 {
@@ -1271,6 +1286,7 @@ void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 		if (StrEqual(loot, "nothing", false)) continue;
 
 		converted = Weapon_Create(loot, origin, angles);
+		AddGlowServer(converted);
 		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
 		count++;
 	}
@@ -1290,6 +1306,7 @@ void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 		if (StrEqual(loot, "nothing", false)) continue;
 
 		converted = Weapon_Create(loot, origin, angles);
+		AddGlowServer(converted);
 		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
 		count++;
 	}
@@ -1308,86 +1325,9 @@ void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 		if (StrEqual(loot, "nothing", false)) continue;
 
 		converted = Weapon_Create(loot, origin, angles);
+		AddGlowServer(converted);
 		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
 		count++;
-	}
-
-	// Reset entity reference for processing fof_crate entities
-	entity = INVALID_ENT_REFERENCE;
-	// Process fof_crate entities
-	while((entity = FindEntityByClassname(entity, "fof_crate*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		Entity_GetAbsOrigin(entity, origin);
-		Entity_GetAbsAngles(entity, angles);
-		Entity_Kill(entity);
-
-		// Spawn a replacement at the same position
-		GetRandomValueFromTable(loot_table, loot_total_weight, loot, sizeof(loot));
-		if (StrEqual(loot, "nothing", false)) continue;
-
-		converted = Weapon_Create(loot, origin, angles);
-		Entity_AddEFlags(converted, EFL_NO_GAME_PHYSICS_SIMULATION | EFL_DONTBLOCKLOS);
-		count++;
-	}
-
-	/*
-	For some reason, some weapons around the map do not have glow activated when using the 'WeaponGlow' function. 
-	After many attempts to fix this, the only 'solution' that worked was starting the same 'CreateTimer' with different intervals.
-	*/
-
-	// Apply glow to weapons
-	entity = INVALID_ENT_REFERENCE;
-	// Process weapons entities
-	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		CreateTimer(5.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
-	}
-
-	// Apply glow to weapons
-	entity = INVALID_ENT_REFERENCE;
-	// Process weapons entities
-	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		CreateTimer(10.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
-	}
-
-	// Apply glow to weapons
-	entity = INVALID_ENT_REFERENCE;
-	// Process weapons entities
-	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		CreateTimer(15.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
-	}
-
-	// Apply glow to weapons
-	entity = INVALID_ENT_REFERENCE;
-	// Process weapons entities
-	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		CreateTimer(20.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
-	}
-
-	// Apply glow to weapons
-	entity = INVALID_ENT_REFERENCE;
-	// Process weapons entities
-	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		CreateTimer(30.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
-	}
-
-	// Apply glow to weapons
-	entity = INVALID_ENT_REFERENCE;
-	// Process weapons entities
-	while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
-	{
-		// Get original's position and remove it
-		CreateTimer(40.0, WeaponGlow, entity, TIMER_FLAG_NO_MAPCHANGE);
 	}
 }
 
