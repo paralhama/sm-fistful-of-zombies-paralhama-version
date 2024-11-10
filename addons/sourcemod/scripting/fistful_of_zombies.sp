@@ -1639,26 +1639,38 @@ void InfectedToZombie(int client)
 
 bool InfectionStep(int& client, float& interval, int& currentCall)
 {
-    // this steps through the process of an infected human to a zombie takes
-    // 300 steps or 30 seconds
-    if (!IsEnabled()) return false;
-    if (!IsClientIngame(client)) return false;
-    if (!IsPlayerAlive(client)) return false;
-    if (!IsHuman(client)) return false;
-    if (GetRoundState() != RoundActive) return false;
-    if (Team_GetClientCount(TEAM_HUMAN, CLIENTFILTER_ALIVE) <= 1) return false;
+	static bool MessageShow = false;
 
-    // become drunk 2/3 of the way through
-    if (currentCall > 200)
-    {
-        float drunkness = GetEntPropFloat(client, Prop_Send, "m_flDrunkness");
-        drunkness = currentCall * 1.0;
-        SetEntPropFloat(client, Prop_Send, "m_flDrunkness", drunkness);
+	// this steps through the process of an infected human to a zombie takes
+	// 300 steps or 30 seconds
+	if (!IsEnabled()) return false;
+	if (!IsClientIngame(client)) return false;
+	if (!IsPlayerAlive(client)) return false;
+	if (!IsHuman(client)) return false;
+	if (GetRoundState() != RoundActive) return false;
+	if (Team_GetClientCount(TEAM_HUMAN, CLIENTFILTER_ALIVE) <= 1) return false;
+
+	// become drunk 2/3 of the way through
+	if (currentCall > 200)
+	{
+		char PlayerName[256];
+		GetClientName(client, PlayerName, sizeof(PlayerName));
+		float drunkness = GetEntPropFloat(client, Prop_Send, "m_flDrunkness");
+		drunkness = currentCall * 1.0;
+		SetEntPropFloat(client, Prop_Send, "m_flDrunkness", drunkness);
+
+		// Verifica se a mensagem já foi mostrada
+		if (!MessageShow)
+		{
+			CPrintToChatAll("%t", "has been infected and can transform at any moment", PlayerName);
+			MessageShow = true; // Marca como mostrada
+		}
     }
 
     // all the way through, change client into a zombie
     if (currentCall > 300)
     {
+        MessageShow = false; // Reset para o próximo jogador
         InfectedToZombie(client);
         return false;
     }
