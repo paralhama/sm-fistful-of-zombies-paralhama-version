@@ -9,7 +9,7 @@
  *
  */
 #pragma semicolon 1
-#pragma newdecls required
+#pragma newdecls optional
 #include <sourcemod>
 #include <sdktools>
 #include <sdkhooks>
@@ -18,12 +18,15 @@
 #include <smlib/entities>
 #include <smlib/weapons>
 #include <entitylump>
+#include <morecolors>
 #undef REQUIRE_EXTENSIONS
 #tryinclude <steamworks>
 
 #define MAX_MAPS 64
 
 char Path[PLATFORM_MAX_PATH], MapName[MAX_MAPS][128], LightValue[MAX_MAPS][128];
+
+Handle g_hHudSync;
 
 int loadedMaps;
 
@@ -129,65 +132,38 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
+	g_hHudSync = CreateHudSynchronizer();
+	if (g_hHudSync == INVALID_HANDLE)
+	{
+		SetFailState("Failed to create HUD synchronizer");
+	}
+
 	AutoExecConfig(true, "fof_zombies_config");
+	LoadTranslations("fistful_of_zombies.phrases");
 
-	CreateConVar("foz_version", PLUGIN_VERSION, PLUGIN_NAME,
-		FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+	CreateConVar("foz_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
 
-	g_EnabledCvar = CreateConVar(
-		"foz_enabled", "1",
-		"Whether or not Fistful of Zombies is enabled",
-		FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_EnabledCvar = CreateConVar("foz_enabled", "1", "Whether or not Fistful of Zombies is enabled", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
-	g_ConfigWeaponsCvar = CreateConVar(
-		"foz_config_weapons", "configs/fistful_of_zombies_weapons.txt",
-		"Weapon loot configuration file location",
-		0);
+	g_ConfigWeaponsCvar = CreateConVar("foz_config_weapons", "configs/fistful_of_zombies_weapons.txt", "Weapon loot configuration file location", 0);
 
-	g_RoundTimeCvar = CreateConVar(
-		"foz_round_time", "120",
-		"How long survivors have to survive in seconds to win a round in Fistful of Zombies",
-		FCVAR_NOTIFY, true, 0.0);
+	g_RoundTimeCvar = CreateConVar("foz_round_time", "120", "How long survivors have to survive in seconds to win a round in Fistful of Zombies", FCVAR_NOTIFY, true, 0.0);
 
-	g_RespawnTimeCvar = CreateConVar(
-		"foz_respawn_time", "15",
-		"How long zombies have to wait before respawning in Fistful of Zombies",
-		FCVAR_NOTIFY, true, 0.0);
+	g_RespawnTimeCvar = CreateConVar("foz_respawn_time", "15", "How long zombies have to wait before respawning in Fistful of Zombies", FCVAR_NOTIFY, true, 0.0);
 
-	g_RatioCvar = CreateConVar(
-		"foz_ratio", "0.65",
-		"Percentage of players that start as human.",
-		FCVAR_NOTIFY, true, 0.01, true, 1.0);
+	g_RatioCvar = CreateConVar("foz_ratio", "0.65", "Percentage of players that start as human.", FCVAR_NOTIFY, true, 0.01, true, 1.0);
 
-	g_InfectionCvar = CreateConVar(
-		"foz_infection", "0.10",
-		"Chance that a human will be infected when punched by a zombie. Value is scaled such that more human players increase the chance",
-		FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_InfectionCvar = CreateConVar("foz_infection", "0.10", "Chance that a human will be infected when punched by a zombie. Value is scaled such that more human players increase the chance", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
-	g_Infected_Speed = CreateConVar(
-		"foz_infected_speed", "300.0",
-		"Change the max speed for a infected player",
-		FCVAR_NOTIFY, true, 255.0, true, 320.0);
+	g_Infected_Speed = CreateConVar("foz_infected_speed", "300.0", "Change the max speed for a infected player", FCVAR_NOTIFY, true, 255.0, true, 320.0);
 
-	g_Infected_Slow = CreateConVar(
-		"foz_infected_slow", "100.0",
-		"Change the max speed for an infected player when receive damage",
-		FCVAR_NOTIFY, true, 0.0, true, 320.0);
+	g_Infected_Slow = CreateConVar("foz_infected_slow", "100.0", "Change the max speed for an infected player when receive damage", FCVAR_NOTIFY, true, 0.0, true, 320.0);
 
-	g_Infected_Slow_Time = CreateConVar(
-		"foz_infected_slow_time", "0.8",
-		"Seconds that the infected player will be slowed when taking damage",
-		FCVAR_NOTIFY, true, 0.5, true, 2.0);
+	g_Infected_Slow_Time = CreateConVar("foz_infected_slow_time", "0.8", "Seconds that the infected player will be slowed when taking damage", FCVAR_NOTIFY, true, 0.5, true, 2.0);
 
-	g_Infected_Damage = CreateConVar(
-		"foz_infected_damage", "0.45",
-		"Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.",
-		FCVAR_NOTIFY, true, 0.10, true, 1.0);
+	g_Infected_Damage = CreateConVar("foz_infected_damage", "0.45", "Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.", FCVAR_NOTIFY, true, 0.10, true, 1.0);
 
-	g_Human_Damage = CreateConVar(
-		"foz_human_damage", "1.5",
-		"Set the damage multiplier that infected players deal to humans. (1.0 is the game standart and 2.0 means double damage)",
-		FCVAR_NOTIFY, true, 1.0, true, 2.0);
+	g_Human_Damage = CreateConVar("foz_human_damage", "1.5", "Set the damage multiplier that infected players deal to humans. (1.0 is the game standart and 2.0 means double damage)", FCVAR_NOTIFY, true, 1.0, true, 2.0);
 
 	g_TeambalanceAllowedCvar = FindConVar("fof_sv_teambalance_allowed");
 	g_TeamsUnbalanceLimitCvar = FindConVar("mp_teams_unbalance_limit");
@@ -201,11 +177,9 @@ public void OnPluginStart()
 	HookEvent("player_team", Event_PlayerTeam, EventHookMode_Pre);
 	HookEvent("player_hurt", OnPlayerHurt, EventHookMode_Post);
 
-	RegAdminCmd("foz_reload", Command_Reload, ADMFLAG_CONFIG,
-		"Force a reload of the configuration file");
+	RegAdminCmd("foz_reload", Command_Reload, ADMFLAG_CONFIG, "Force a reload of the configuration file");
 
-	RegAdminCmd("foz_dump", Command_Dump, ADMFLAG_ROOT,
-		"Debug: Output information about the current game to console");
+	RegAdminCmd("foz_dump", Command_Dump, ADMFLAG_ROOT, "Debug: Output information about the current game to console");
 
 	AddCommandListener(Command_JoinTeam, "jointeam");
 
@@ -241,7 +215,15 @@ public Action EnableWeaponsGlowOnMap(Handle timer, any iGrenade)
 
 	while((weapon = FindEntityByClassname(weapon, "weapon_*")) != INVALID_ENT_REFERENCE)
 	{
-		AddGlowServer(weapon);
+        // Verifica se tem a propriedade de dono
+        if(!HasEntProp(weapon, Prop_Send, "m_hOwnerEntity"))
+            continue;
+            
+        // Se NÃO tem dono (owner == -1), então a arma está no chão
+        if(GetEntPropEnt(weapon, Prop_Send, "m_hOwnerEntity") == -1)
+        {
+            AddGlowServer(weapon);
+        }
 	}
 }
 
@@ -250,22 +232,17 @@ public void AddGlowServer(int entity)
     SDKCall(AddGlowServerSDKCall, entity);
 }
 
-Action WeaponGlow(Handle timer, any entity)
-{
-    // Verifica se a entidade é válida antes de prosseguir
-    if (IsValidEntity(entity))
-    {
-        AddGlowServer(entity);
-        return Plugin_Handled;
-    }
-    
-    // Caso a entidade não seja válida, retornar Plugin_Continue ou outro valor apropriado
-    return Plugin_Continue;
-}
-
 // ######### GLOW WEAPONS ##########
 
-
+public void OnMapEnd()
+{
+    // Limpar o handle do HUD synchronizer quando o mapa terminar
+    if (g_hHudSync != INVALID_HANDLE)
+    {
+        CloseHandle(g_hHudSync);
+        g_hHudSync = INVALID_HANDLE;
+    }
+}
 
 public Action OnHatShot(Handle event, const char[] name, bool dontBroadcast)
 {
@@ -482,8 +459,10 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 	// a dead human becomes a zombie
 	if (IsHuman(client))
 	{
-		// announce the death
-		PrintCenterTextAll("%N has turned...", client);
+		// announce the infection
+		char PlayerName[256];
+		GetClientName(client, PlayerName, sizeof(PlayerName));
+		CPrintToChatAll("%t", "was infected", PlayerName);
 		EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
 
 		RequestFrame(BecomeZombieDelay, userid);
@@ -503,6 +482,36 @@ void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
     RemoveTeamplayEntities();
     RandomizeTeams();
     SetDefaultConVars();
+    // Criar um timer para mostrar as mensagens após um pequeno delay
+    CreateTimer(0.5, Timer_ShowRoundStartMessages, _, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action Timer_ShowRoundStartMessages(Handle timer)
+{
+    if (g_hHudSync == INVALID_HANDLE) return Plugin_Stop;
+
+    // Loop através de todos os clientes
+    for (int client = 1; client <= MaxClients; client++)
+    {
+        if (!IsClientInGame(client) || IsFakeClient(client) || !IsPlayerAlive(client))
+            continue;
+
+        // Configurar os parâmetros do HUD uma vez
+        // SetHudTextParams(0.02, 0.4, 10.0, 255, 255, 255, 255, 0, 0.5, 0.5, 0.5);
+
+        if (IsHuman(client))
+        {
+            SetHudTextParams(0.02, 0.4, 10.0, 60, 118, 226, 255, 0, 0.5, 0.5, 0.5);
+            ShowSyncHudText(client, g_hHudSync, "%t", "Survive the Infected attack");
+        }
+        else if (IsZombie(client))
+        {
+            SetHudTextParams(0.02, 0.4, 10.0, 255, 61, 61, 255, 0, 0.5, 0.5, 0.5);
+            ShowSyncHudText(client, g_hHudSync, "%t", "Find, attack, and infect the humans");
+        }
+    }
+
+    return Plugin_Stop;
 }
 
 void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
@@ -554,7 +563,7 @@ void PlayerSpawnDelay(int userid)
         CreateTimer(0.3, Timer_GivePrimaryWeapon, userid,
                 TIMER_FLAG_NO_MAPCHANGE);
 
-        PrintCenterText(client, "Survive the zombie plague!");
+        //PrintCenterText(client, "Survive the zombie plague!");
     }
 	else if (IsZombie(client))
 	{
@@ -564,7 +573,7 @@ void PlayerSpawnDelay(int userid)
 		FakeClientCommandEx(client, "use weapon_fists");
 		EmitZombieYell(client);
 		CreateTimer(0.1, SetMaxSpeedInfected, userid, TIMER_FLAG_NO_MAPCHANGE);
-		PrintCenterText(client, "Ughhhh..... BRAINNNSSSS");
+		//PrintCenterText(client, "Ughhhh..... BRAINNNSSSS");
 	}
 }
 
@@ -689,7 +698,7 @@ Action Hook_OnWeaponCanUse(int client, int weapon)
 	if (IsZombie(client) && !StrEqual(class, "weapon_fists"))
 	{
 		EmitSoundToClient(client, SOUND_NOPE);
-		PrintToChat(client, "Zombies Can Not Use Guns");
+		CPrintToChat(client, "%t", "Zombies Can Not Use Guns");
 
 		return Plugin_Handled;
 	}
@@ -947,8 +956,7 @@ Action Command_JoinTeam(int client, const char[] command, int argc)
                 StrEqual(arg, "auto", false))
         {
             EmitSoundToClient(client, SOUND_NOPE);
-            PrintCenterText(client, "You cannot change teams");
-            PrintToChat(client, "You cannot change teams");
+            CPrintToChat(client, "%t", "You cannot change teams");
             return Plugin_Handled;
         }
     }
@@ -1507,6 +1515,7 @@ void StripWeapons(int client)
 		int dropped_weapon = CreateEntityByName(class_name);
 		if (dropped_weapon != -1)
 		{
+			CPrintToChat(client, "%t", "Zombies Can Not Use Guns");
 			TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
 			DispatchSpawn(dropped_weapon);
 			AddGlowServer(dropped_weapon);
@@ -1622,7 +1631,9 @@ void InfectedToZombie(int client)
 	EmitZombieYell(client);
 	SetEntPropFloat(client, Prop_Send, "m_flDrunkness", 0.0);
 
-	PrintCenterTextAll("%N has succumbed to the infection...", client);
+	char PlayerName[256];
+	GetClientName(client, PlayerName, sizeof(PlayerName));
+	CPrintToChatAll("%t", "Become Infected", PlayerName);
 	EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
 }
 
