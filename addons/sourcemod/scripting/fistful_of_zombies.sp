@@ -462,7 +462,6 @@ void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 		// announce the infection
 		char PlayerName[256];
 		GetClientName(client, PlayerName, sizeof(PlayerName));
-		CPrintToChatAll("%t", "was infected", PlayerName);
 		EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
 
 		RequestFrame(BecomeZombieDelay, userid);
