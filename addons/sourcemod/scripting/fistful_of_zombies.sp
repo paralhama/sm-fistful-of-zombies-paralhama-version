@@ -1632,6 +1632,7 @@ void InfectedToZombie(int client)
 
 	char PlayerName[256];
 	GetClientName(client, PlayerName, sizeof(PlayerName));
+	WriteParticle(client, "bigboom_blood");
 	CPrintToChatAll("%t", "Become Infected", PlayerName);
 	EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
 }
@@ -1803,3 +1804,54 @@ public Action ChangeLight(Handle timer)
 	return Plugin_Continue; // Retorna um valor explícito
 }
 // ################################################################################################################
+
+WriteParticle(Ent, String:ParticleName[])
+{
+    decl Particle;
+    decl String:tName[64];
+
+    Particle = CreateEntityByName("info_particle_system");
+    
+    if(IsValidEdict(Particle))
+    {
+		float Position[3];
+		GetClientAbsOrigin(Ent, Position);
+		Position[2] += 50.0;
+
+        GetEntPropVector(Ent, Prop_Send, "m_vecOrigin", Position);
+        Position[2] += GetRandomFloat(15.0, 35.0);
+
+        TeleportEntity(Particle, Position, NULL_VECTOR, NULL_VECTOR);
+
+        // Configura nome e propriedades da partícula
+        Format(tName, sizeof(tName), "Entity%d", Ent);
+        DispatchKeyValue(Ent, "targetname", tName);
+        GetEntPropString(Ent, Prop_Data, "m_iName", tName, sizeof(tName));
+
+        DispatchKeyValue(Particle, "targetname", "CSSParticle");
+        DispatchKeyValue(Particle, "parentname", tName);
+        DispatchKeyValue(Particle, "effect_name", ParticleName);
+
+        DispatchSpawn(Particle);
+
+        // Configura a partícula como "parented" ao jogador
+        SetVariantString(tName);
+        AcceptEntityInput(Particle, "SetParent", Particle, Particle, 0);
+
+        ActivateEntity(Particle);
+        AcceptEntityInput(Particle, "start");
+
+        // Deleta a partícula após 3 segundos
+        CreateTimer(1.0, DeleteParticle, Particle);
+    }
+}
+
+// Função para deletar a partícula após o tempo determinado
+public Action:DeleteParticle(Handle:timer, any:Particle)
+{
+    if (IsValidEdict(Particle))
+    {
+        AcceptEntityInput(Particle, "Kill");
+    }
+    return Plugin_Stop;
+}
