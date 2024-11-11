@@ -234,16 +234,6 @@ public void AddGlowServer(int entity)
 
 // ######### GLOW WEAPONS ##########
 
-public void OnMapEnd()
-{
-    // Limpar o handle do HUD synchronizer quando o mapa terminar
-    if (g_hHudSync != INVALID_HANDLE)
-    {
-        CloseHandle(g_hHudSync);
-        g_hHudSync = INVALID_HANDLE;
-    }
-}
-
 public Action OnHatShot(Handle event, const char[] name, bool dontBroadcast)
 {
 	SetEventBroadcast(event, true);
@@ -823,7 +813,13 @@ public Action ResetPlayerSpeed(Handle timer, any client)
 
 public Action Infected_Damage_Filter(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &ammotype, int hitbox, int hitgroup)
 {
-    // Reduzir o dano se não for um tiro na cabeça
+    // Primeiro, validamos se os índices são válidos
+    if (!IsValidClient(attacker) || !IsValidClient(victim))
+    {
+        return Plugin_Continue; // Se não forem válidos, deixa o dano passar normalmente
+    }
+    
+    // Agora podemos checar as condições com segurança
     if (IsHuman(attacker) && IsZombie(victim))
     {
         if (hitgroup != 1)
@@ -836,11 +832,9 @@ public Action Infected_Damage_Filter(int victim, int &attacker, int &inflictor, 
     if (IsZombie(attacker) && IsHuman(victim))
     {
         float HumanDamage = g_Human_Damage.FloatValue;
-
-        // Verifica se o tipo de dano é DMG_CLUB
         if (damagetype & DMG_CLUB)
         {
-            damage *= HumanDamage;  // Multiplica o dano se for DMG_CLUB
+            damage *= HumanDamage;
         }
     }
     
@@ -1400,14 +1394,26 @@ bool IsEnabled()
     return g_EnabledCvar.BoolValue;
 }
 
-bool IsHuman(int client)
+// Função auxiliar para verificar se o cliente é válido
+bool IsValidClient(int client)
 {
-    return GetClientTeam(client) == TEAM_HUMAN;
+    return (client > 0 && client <= MaxClients && IsClientInGame(client));
 }
 
+// Função para verificar se é zumbi
 bool IsZombie(int client)
 {
+    if (!IsValidClient(client))
+        return false;
     return GetClientTeam(client) == TEAM_ZOMBIE;
+}
+
+// Função para verificar se é humano
+bool IsHuman(int client)
+{
+    if (!IsValidClient(client))
+        return false;
+    return GetClientTeam(client) == TEAM_HUMAN;
 }
 
 void JoinHumanTeam(int client)
