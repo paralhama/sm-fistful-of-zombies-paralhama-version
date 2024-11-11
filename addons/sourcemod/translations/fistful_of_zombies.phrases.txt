@@ -1,4 +1,3 @@
-// Strings like " ff2200 " refer to colors, this one for example makes the text red.
 "Phrases"
 {
   "Survive the Infected attack"
