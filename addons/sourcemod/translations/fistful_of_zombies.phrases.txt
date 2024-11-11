@@ -1,0 +1,60 @@
+// Strings like " ff2200 " refer to colors, this one for example makes the text red.
+"Phrases"
+{
+  "Survive the Infected attack"
+  {
+    "en"    "Survive the infected attack!\n - Find shelter in a high place to protect yourself.\n - Shoot infected in the head to deal more damage."
+    "pt"    "Sobreviva ao ataque dos infectados!\n - Encontre abrigo em um lugar alto para se proteger.\n - Atire na cabeça dos infectados para causar mais dano."
+    "pt_p"  "Sobreviva ao ataque dos infectados!\n - Encontre abrigo num lugar alto para se proteger.\n - Dispare na cabeça dos infectados para causar mais dano."
+    "es"    "¡Sobrevive al ataque de los infectados!\n - Encuentra refugio en un lugar alto para protegerte.\n - Dispara a los infectados en la cabeza para causar más daño."
+    "fr"    "Survivez à l'attaque des infectés !\n - Trouvez un abri en hauteur pour vous protéger.\n - Visez la tête des infectés pour infliger plus de dégâts."
+  }
+
+  "Find, attack, and infect the humans"
+  {
+	"en"    "Find, attack, and infect the humans!\n - Your body is resistant to damage, but your head is a weak spot.\n - Infected are immune to fall damage.\n - Throw explosive barrels at humans to eliminate them!"
+	"pt"    "Encontre, ataque e infecte os humanos!\n - Seu corpo é resistente a danos, mas sua cabeça é um ponto fraco.\n - Infectados são imunes a dano por queda.\n - Arremesse barris explosivos nos humanos para eliminá-los!"
+	"pt_p"  "Encontre, ataque e infecte os humanos!\n - O seu corpo é resistente a danos, mas a sua cabeça é o ponto fraco.\n - Os infectados são imunes a dano por queda.\n - Arremesse barris explosivos nos humanos para eliminá-los!"
+	"es"    "¡Encuentra, ataca e infecta a los humanos!\n - Tu cuerpo es resistente a los daños, pero tu cabeza es un punto débil.\n - Los infectados son inmunes al daño por caída.\n - Lanza barriles explosivos a los humanos para eliminarlos!"
+	"fr"    "Trouvez, attaquez et infectez les humains !\n - Votre corps est résistant aux dégâts, mais votre tête est un point faible.\n - Les infectés sont immunisés contre les dégâts de chute.\n - Jetez des barils explosifs sur les humains pour les éliminer !"
+  }
+
+  "You cannot change teams"
+  {
+    "#format" "{1:s}"
+    "en"    "{red}You cannot change teams!"
+    "pt"    "{red}Você não pode mudar de equipe!"
+    "pt_p"    "{red}Não podes mudar de equipa!"
+    "es"    "{red}¡No puedes cambiar de equipo!"
+    "fr"    "{red}Vous ne pouvez pas changer d'équipe!"
+  }
+
+  "Zombies Can Not Use Guns"
+  {
+    "en"    "{red}Infected cannot use weapons."
+    "pt"    "{red}Infectados não podem usar armas."
+    "pt_p"  "{red}Infetados não podem usar armas."
+    "es"    "{red}Los infectados no pueden usar armas."
+    "fr"    "{red}Les infectés ne peuvent pas utiliser d'armes."
+  }
+  
+  "has been infected and can transform at any moment"
+  {
+    "#format" "{1:s}"
+    "en"    "{orange}The virus is taking over {white}{1}{orange}'s body!\nTransformation could happen at any moment."
+    "pt"    "{orange}O vírus está dominando o corpo de {white}{1}{orange}!\nA transformação pode ocorrer a qualquer momento."
+    "pt_p"  "{orange}O vírus está tomando conta do corpo de {white}{1}{orange}!\nA transformação pode acontecer a qualquer momento."
+    "es"    "{orange}¡El virus está apoderándose del cuerpo de {white}{1}{orange}!\nLa transformación puede ocurrir en cualquier momento."
+    "fr"    "{orange}Le virus prend le contrôle du corps de {white}{1}{orange}!\nLa transformation peut survenir à tout moment."
+  }
+  
+  "Become Infected"
+  {
+    "#format" "{1:s}"
+    "en"    "{white}{1} {red}became infected."
+    "pt"    "{white}{1} {red}se transformou em um infectado."
+    "pt_p"  "{white}{1} {red}transformou-se em um infetado."
+    "es"    "{white}{1} {red}se convirtió en un infectado."
+    "fr"    "{white}{1} {red}s'est transformé en infecté."
+  }
+}
