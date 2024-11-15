@@ -42,7 +42,7 @@ int loadedMaps;
 
 #define GAME_DESCRIPTION "Fistful Of Zombies"
 #define SOUND_ROUNDSTART "music/standoff1.mp3"
-#define SOUND_STINGER "music/kill1.wav"
+#define SOUND_STINGER "music/course_stinger1.wav"
 #define SOUND_NOPE "player/voice/no_no1.wav"
 
 #define TEAM_HUMAN 2  // Vigilantes
@@ -102,7 +102,8 @@ float currentTime; // Declarando uma variável de ponto flutuante corretamente
 int g_PVMid[MAXPLAYERS+1]; // Predicted ViewModel ID's
 int g_iClawModel;    // Custom ViewModel index
 
-
+int LastPlayerToThrowObject[2049] = {-1, ...};
+int oldButtons[MAXPLAYERS+1] = {0, ...};
 
 // ######### GLOW WEAPONS ##########
 Handle AddGlowServerSDKCall;
@@ -132,6 +133,11 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
+
+	for(int i = 1; i <= MaxClients; i++)
+		if(IsClientInGame(i))
+			SDKHook(i, SDKHook_OnTakeDamage, OnTakeDamagePlayer);
+
 	g_hHudSync = CreateHudSynchronizer();
 	if (g_hHudSync == INVALID_HANDLE)
 	{
@@ -204,7 +210,6 @@ public void OnPluginStart()
 
 	CreateTimer(0.5, EnableWeaponsGlowOnMap, _, TIMER_REPEAT);
 // ######### GLOW WEAPONS ##########
-
 }
 
 // ######### GLOW WEAPONS ##########
@@ -252,6 +257,8 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_TraceAttack, Infected_Damage_Filter);
 
 	g_HumanPriority[client] = 0;
+
+	SDKHook(client, SDKHook_OnTakeDamage, OnTakeDamagePlayer);
 }
 
 public void OnMapStart()
@@ -798,6 +805,34 @@ public Action OnPlayerHurt(Event event, const char[] name, bool dontBroadcast)
 	return Plugin_Continue;
 }
 
+public Action OnTakeDamagePlayer(int entity, int &attacker, int &inflictor, float &damage, int &damagetype)
+{
+    char entname[64], entname2[64], modelname[128];
+    
+    GetEntityClassname(attacker, entname, sizeof(entname));
+    GetEntityClassname(inflictor, entname2, sizeof(entname2));
+    
+    if(strcmp(entname, "entityflame") == 0 && strcmp(entname2, "prop_physics_respawnable") == 0)
+    {
+        // Verifica o modelo do prop
+        GetEntPropString(inflictor, Prop_Data, "m_ModelName", modelname, sizeof(modelname));
+        
+        // Verifica se é o barril explosivo
+        if(StrContains(modelname, "barrel2_explosive", false) != -1 || StrContains(modelname, "barrel1_explosive", false) != -1)
+        {
+            if(LastPlayerToThrowObject[inflictor] != -1 && IsClientInGame(LastPlayerToThrowObject[inflictor]))
+            {
+                attacker = LastPlayerToThrowObject[inflictor];
+                // Mantem o inflictor como o barril
+                damagetype |= DMG_BLAST; // Adiciona o tipo de dano de explosão
+                return Plugin_Changed;
+            }
+        }
+    }
+    
+    return Plugin_Continue;
+}
+
 // Função para restaurar a velocidade do jogador para 300.0
 public Action ResetPlayerSpeed(Handle timer, any client)
 {
@@ -1093,6 +1128,33 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
         }
     }
 
+	// Code for infected to throw flaming barrels
+    if (buttons & IN_SPEED && !(oldButtons[client] & IN_SPEED) && IsZombie(client))
+    {
+        int item = GetEntPropEnt(client, Prop_Send, "m_hAttachedObject");    
+        
+        if(IsValidEntity(item))
+        {
+            char classname[64], modelname[128];
+            GetEntityClassname(item, classname, sizeof(classname));
+            
+            // Verifica se é um prop_physics_respawnable
+            if(strcmp(classname, "prop_physics_respawnable") == 0)
+            {
+                // Verifica o modelo
+                GetEntPropString(item, Prop_Data, "m_ModelName", modelname, sizeof(modelname));
+                
+                // Se for o barril explosivo
+                if(StrContains(modelname, "barrel2_explosive", false) != -1 || StrContains(modelname, "barrel1_explosive", false) != -1)
+                {
+                    LastPlayerToThrowObject[item] = client;
+                    AcceptEntityInput(item, "Ignite", client, client);
+                }
+            }
+        }
+    }
+
+    oldButtons[client] = buttons;
     return Plugin_Continue;
 }
 
@@ -1671,22 +1733,22 @@ bool InfectionStep(int& client, float& interval, int& currentCall)
 			CPrintToChatAll("%t", "has been infected and can transform at any moment", PlayerName);
 			MessageShow = true; // Marca como mostrada
 		}
-    }
+	}
 
-    // all the way through, change client into a zombie
-    if (currentCall > 300)
-    {
-        MessageShow = false; // Reset para o próximo jogador
-        InfectedToZombie(client);
-        return false;
-    }
+	// all the way through, change client into a zombie
+	if (currentCall > 300)
+	{
+		MessageShow = false; // Reset para o próximo jogador
+		InfectedToZombie(client);
+		return false;
+	}
 
-    if (currentCall > 250 && (2 * GetURandomFloat()) < (currentCall / 300.0))
-    {
-        FakeClientCommand(client, "vc 15");
-    }
+	if (currentCall > 250 && (2 * GetURandomFloat()) < (currentCall / 300.0))
+	{
+		FakeClientCommand(client, "vc 15");
+	}
 
-    return true;
+	return true;
 }
 
 void RoundEndCheck()
@@ -1813,43 +1875,43 @@ public Action ChangeLight(Handle timer)
 
 WriteParticle(Ent, String:ParticleName[])
 {
-    decl Particle;
-    decl String:tName[64];
+	decl Particle;
+	decl String:tName[64];
 
-    Particle = CreateEntityByName("info_particle_system");
+	Particle = CreateEntityByName("info_particle_system");
     
-    if(IsValidEdict(Particle))
-    {
+	if(IsValidEdict(Particle))
+	{
 		float Position[3];
 		GetClientAbsOrigin(Ent, Position);
 		Position[2] += 50.0;
 
-        GetEntPropVector(Ent, Prop_Send, "m_vecOrigin", Position);
-        Position[2] += GetRandomFloat(15.0, 35.0);
+		GetEntPropVector(Ent, Prop_Send, "m_vecOrigin", Position);
+		Position[2] += GetRandomFloat(15.0, 35.0);
 
-        TeleportEntity(Particle, Position, NULL_VECTOR, NULL_VECTOR);
+		TeleportEntity(Particle, Position, NULL_VECTOR, NULL_VECTOR);
 
-        // Configura nome e propriedades da partícula
-        Format(tName, sizeof(tName), "Entity%d", Ent);
-        DispatchKeyValue(Ent, "targetname", tName);
-        GetEntPropString(Ent, Prop_Data, "m_iName", tName, sizeof(tName));
+		// Configura nome e propriedades da partícula
+		Format(tName, sizeof(tName), "Entity%d", Ent);
+		DispatchKeyValue(Ent, "targetname", tName);
+		GetEntPropString(Ent, Prop_Data, "m_iName", tName, sizeof(tName));
 
-        DispatchKeyValue(Particle, "targetname", "CSSParticle");
-        DispatchKeyValue(Particle, "parentname", tName);
-        DispatchKeyValue(Particle, "effect_name", ParticleName);
+		DispatchKeyValue(Particle, "targetname", "CSSParticle");
+		DispatchKeyValue(Particle, "parentname", tName);
+		DispatchKeyValue(Particle, "effect_name", ParticleName);
 
-        DispatchSpawn(Particle);
+		DispatchSpawn(Particle);
 
-        // Configura a partícula como "parented" ao jogador
-        SetVariantString(tName);
-        AcceptEntityInput(Particle, "SetParent", Particle, Particle, 0);
+		// Configura a partícula como "parented" ao jogador
+		SetVariantString(tName);
+		AcceptEntityInput(Particle, "SetParent", Particle, Particle, 0);
 
-        ActivateEntity(Particle);
-        AcceptEntityInput(Particle, "start");
+		ActivateEntity(Particle);
+		AcceptEntityInput(Particle, "start");
 
-        // Deleta a partícula após 3 segundos
-        CreateTimer(1.0, DeleteParticle, Particle);
-    }
+		// Deleta a partícula após 3 segundos
+		CreateTimer(1.0, DeleteParticle, Particle);
+	}
 }
 
 // Função para deletar a partícula após o tempo determinado
