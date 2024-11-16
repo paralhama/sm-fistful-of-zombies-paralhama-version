@@ -78,6 +78,8 @@ KeyValues g_GearPrimaryTable;
 int g_GearPrimaryTotalWeight;
 bool g_GivenPrimary[MAXPLAYERS+1] = {false, ...};
 
+bool g_human_transformation_message[MAXPLAYERS+1] = {false, ...};
+
 KeyValues g_GearSecondaryTable;
 int g_GearSecondaryTotalWeight;
 bool g_GivenSecondary[MAXPLAYERS+1] = {false, ...};
@@ -484,30 +486,32 @@ void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 
 public Action Timer_ShowRoundStartMessages(Handle timer)
 {
-    if (g_hHudSync == INVALID_HANDLE) return Plugin_Stop;
+	if (g_hHudSync == INVALID_HANDLE) return Plugin_Stop;
 
-    // Loop através de todos os clientes
-    for (int client = 1; client <= MaxClients; client++)
-    {
-        if (!IsClientInGame(client) || IsFakeClient(client) || !IsPlayerAlive(client))
-            continue;
+	// Loop através de todos os clientes
+	for (int client = 1; client <= MaxClients; client++)
+	{
+		g_human_transformation_message[client] = false;
 
-        // Configurar os parâmetros do HUD uma vez
-        // SetHudTextParams(0.02, 0.4, 10.0, 255, 255, 255, 255, 0, 0.5, 0.5, 0.5);
+		if (!IsClientInGame(client) || IsFakeClient(client) || !IsPlayerAlive(client))
+			continue;
 
-        if (IsHuman(client))
-        {
-            SetHudTextParams(0.02, 0.4, 10.0, 60, 118, 226, 255, 0, 0.5, 0.5, 0.5);
-            ShowSyncHudText(client, g_hHudSync, "%t", "Survive the Infected attack");
-        }
-        else if (IsZombie(client))
-        {
-            SetHudTextParams(0.02, 0.4, 10.0, 255, 61, 61, 255, 0, 0.5, 0.5, 0.5);
-            ShowSyncHudText(client, g_hHudSync, "%t", "Find, attack, and infect the humans");
-        }
-    }
+		// Configurar os parâmetros do HUD uma vez
+		// SetHudTextParams(0.02, 0.4, 10.0, 255, 255, 255, 255, 0, 0.5, 0.5, 0.5);
 
-    return Plugin_Stop;
+		if (IsHuman(client))
+		{
+			SetHudTextParams(0.02, 0.4, 10.0, 60, 118, 226, 255, 0, 0.5, 0.5, 0.5);
+			ShowSyncHudText(client, g_hHudSync, "%t", "Survive the Infected attack");
+		}
+		else if (IsZombie(client))
+		{
+			SetHudTextParams(0.02, 0.4, 10.0, 255, 61, 61, 255, 0, 0.5, 0.5, 0.5);
+			ShowSyncHudText(client, g_hHudSync, "%t", "Find, attack, and infect the humans");
+		}
+	}
+
+	return Plugin_Stop;
 }
 
 void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
@@ -1485,6 +1489,7 @@ void JoinHumanTeam(int client)
 
 void JoinZombieTeam(int client)
 {
+    SetEntProp(client, Prop_Send, "m_iTeamNum", 3);
     ChangeClientTeam(client, TEAM_ZOMBIE);
 }
 
@@ -1702,13 +1707,30 @@ void InfectedToZombie(int client)
 	GetClientName(client, PlayerName, sizeof(PlayerName));
 	WriteParticle(client, "bigboom_blood");
 	CPrintToChatAll("%t", "Become Infected", PlayerName);
+
+	new weapon_index;
+	for (new x = 0; x <= 3; x++)
+	{
+		if (x != 2 && (weapon_index = GetPlayerWeaponSlot(client, x)) != -1)
+		{  
+			RemovePlayerItem(client, weapon_index);
+			RemoveEdict(weapon_index);
+			CreateTimer(0.5, usefists, client);
+		}
+	}
+
 	EmitSoundToAll(SOUND_STINGER, .flags = SND_CHANGEPITCH, .pitch = 80);
+}
+
+public Action:usefists(Handle:timer, any:client)
+{
+	GivePlayerItem(client, "weapon_fists");
+	FakeClientCommandEx(client, "use weapon_fists");
+	ClientCommand(client, "use weapon_fists");
 }
 
 bool InfectionStep(int& client, float& interval, int& currentCall)
 {
-	static bool MessageShow = false;
-
 	// this steps through the process of an infected human to a zombie takes
 	// 300 steps or 30 seconds
 	if (!IsEnabled()) return false;
@@ -1725,20 +1747,20 @@ bool InfectionStep(int& client, float& interval, int& currentCall)
 		GetClientName(client, PlayerName, sizeof(PlayerName));
 		float drunkness = GetEntPropFloat(client, Prop_Send, "m_flDrunkness");
 		drunkness = currentCall * 1.0;
-		SetEntPropFloat(client, Prop_Send, "m_flDrunkness", drunkness);
 
 		// Verifica se a mensagem já foi mostrada
-		if (!MessageShow)
+		if (!g_human_transformation_message[client])
 		{
+			SetEntPropFloat(client, Prop_Send, "m_flDrunkness", drunkness);
 			CPrintToChatAll("%t", "has been infected and can transform at any moment", PlayerName);
-			MessageShow = true; // Marca como mostrada
+			g_human_transformation_message[client] = true; // Marca como mostrada
+			CreateTimer(5.0, stop_drunkness_effect, client);
 		}
 	}
 
 	// all the way through, change client into a zombie
 	if (currentCall > 300)
 	{
-		MessageShow = false; // Reset para o próximo jogador
 		InfectedToZombie(client);
 		return false;
 	}
@@ -1749,6 +1771,11 @@ bool InfectionStep(int& client, float& interval, int& currentCall)
 	}
 
 	return true;
+}
+
+public Action:stop_drunkness_effect(Handle:timer, any:client)
+{
+	SetEntPropFloat(client, Prop_Send, "m_flDrunkness", 0.0);
 }
 
 void RoundEndCheck()

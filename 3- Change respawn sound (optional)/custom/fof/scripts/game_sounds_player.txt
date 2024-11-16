@@ -1,7 +1,2501 @@
+// FOF sfx by sonicvalley
+
+"Horse.Slide"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"	"animals/horse_slide.wav"
+}
+
+
+"Horse.Clop"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.65"
+	"pitch"			"100"
+	"soundlevel"		"SNDLVL_70dB"
+
+	"wave"	"animals/horse_clop1.wav"
+}
+
+"Horse.ClopBack"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.6"
+	"pitch"			"100"
+	"soundlevel"		"SNDLVL_60dB"
+
+	"wave"	"animals/horse_clop3.wav"
+}
+
+"Horse.Gallop_Hard"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_105dB"
+
+	"wave"	"animals/horse_gallop_hard1.wav"
+}
+
+"Horse.Gallop"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_105db"
+
+	"wave"	"animals/horse_gallop1.wav"
+}
+
+"Horse.Gallop2"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_105dB"
+
+	"wave"	"animals/horse_gallop2.wav"
+}
+
+"Horse.Gallop3"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_105dB"
+
+	"wave"	"animals/horse_gallop3.wav"
+}
+
+"Horse.Gallop4"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_105dB"
+
+	"wave"	"animals/horse_gallop4.wav"
+}
+
+"Player.Slide"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"	"player/slide.wav"
+}
+
+"Course.Stinger1"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_90dB"
+
+	"wave"	"music/course_stinger1.wav"
+}
+
+"Course.Stinger2"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_90dB"
+
+	"wave"	"music/course_stinger2.wav"
+}
+
+"Course.Stinger3"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_90dB"
+
+	"wave"	"music/course_stinger3.wav"
+}
+
+"Course.Stinger4"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_90dB"
+
+	"wave"	"music/course_stinger4.wav"
+}
+
+"Course.End_Music"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1.0"
+	"soundlevel"	"SNDLVL_160dB"
+
+	"wave"	"#/music/round_end_stinger.mp3"
+}
+
+"Player.ButtWalk"
+{
+	"soundlevel" "SNDLVL_75dB"
+	"pitch" "PITCH_NORM"
+	"volume" "0.35"
+	"rndwave"
+	{
+		"wave"		"physics/cardboard/cardboard_box_impact_soft1.wav"
+		"wave"		"physics/cardboard/cardboard_box_impact_soft2.wav"
+	}
+}
+
+"Ragged_Powerup.Full"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.6"
+	"soundlevel"		"SNDLVL_85dB"
+
+	"wave"	"Halloween/ragged_powerup.wav"
+}
+
+"Standoff_Music"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.6"
+	"soundlevel"		"SNDLVL_85dB"
+
+	"wave"	"music/standoff1.mp3"
+}
+
+"Player.Burp"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"		"0.7"
+	"pitch"			"80, 95"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"	"player/burp.wav"
+}
+
+"BB.MostWantedWarning"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.5"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"	"music/most_wanted_stinger1.wav"
+}
+
+"FoF.BuyTick"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"			"common/buy_tick.wav"
+}
+
+"FoF.BuyTickEnd"
+{
+	"channel"		"CHAN_STATIC"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"			"common/buy_tick_end.wav"
+}
+
+"FoF.Death_p3"
+{
+	"channel"	"CHAN_AUTO"
+	"soundlevel" "SNDLVL_95db"
+	"pitch" "90,105"
+	"volume" "1"
+	"rndwave"
+	{
+	"wave" "npc/mexican/death-01.wav"
+	"wave" "npc/mexican/death-02.wav"
+	"wave" "npc/mexican/death-03.wav"
+	"wave" "npc/mexican/death-04.wav"
+	"wave" "npc/mexican/death-05.wav"
+	"wave" "npc/mexican/death-06.wav"
+	"wave" "npc/mexican/death-07.wav"
+	"wave" "npc/mexican/death-08.wav"
+	"wave" "npc/mexican/death-09.wav"
+	"wave" "npc/mexican/death-10.wav"
+	"wave" "npc/mexican/death-11.wav"
+	"wave" "npc/mexican/death-12.wav"
+	"wave" "npc/mexican/death-13.wav"
+	}
+} 
+
+"FoF.RespawnAlert"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.9"
+	"pitch"			"95, 105"
+	"soundlevel"		"SNDLVL_65dB"
+
+	"wave"			"music/respawn_stinger.wav"
+}
+
+"FoF.MultiKill1"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_65dB"
+
+	"wave"	"music/kill1.wav"
+}
+
+"FoF.MultiKill2"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_65dB"
+
+	"wave"	"music/kill2.wav"		
+}
+
+"FoF.MultiKill3"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_65dB"
+
+	"wave"	"music/kill3.wav"		
+}
+
+"FoF.MultiKill_Special"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1"
+	"soundlevel"		"SNDLVL_75dB"
+
+	"wave"	"music/kill4.wav"		
+}
+
+"FoFPlayer.SideJump"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.3"
+	"pitch"			"95, 105"
+	"soundlevel"	"SNDLVL_65dB"
+
+	"wave"	"player/pl_sidejump.wav"
+			
+}
+
+"FoFPlayer.KickSwoosh"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.6"
+	"pitch"			"95, 105"
+	"soundlevel"	"SNDLVL_75dB"
+
+	"wave"	"player/kick_swoosh.wav"
+			
+}
+
+"FoFPlayer.KickHit"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.85"
+	"pitch"			"100"
+	"soundlevel"	"SNDLVL_85dB"
+
+	"wave"	"player/kick_hit.wav"
+			
+}
+
+"FoFPlayer.KickHitBoots"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"1.0"
+	"pitch"			"90"
+	"soundlevel"	"SNDLVL_85dB"
+
+	"wave"	"player/kick_hit_boots.wav"			
+}
+
+"FoFPlayer.NoStamina"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.15"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"0"
+
+	"wave"			"player/breath1.wav"
+}
+
+
+"Whiskey.Use1"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"wave"	"player/voice/whiskeygive_haveadrink.wav"
+			
+}
+
+
+"Whiskey.Glug"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_50dB"
+
+	"rndwave"
+	{
+	"wave"	"player/whiskey_glug1.wav"
+	"wave"	"player/whiskey_glug2.wav"
+	"wave"	"player/whiskey_glug3.wav"
+	"wave"	"player/whiskey_glug4.wav"
+	}
+			
+}
+
+
+"Whiskey.StopCall"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.0"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"wave"	"player/voice/whiskeygive_needawhiskey.wav"
+
+}
+
+"FoFPlayer.Equipment"
+{
+	"channel" "CHAN_ITEM"
+	"volume" "1.0"
+	"pitch" "95,105"
+
+	"soundlevel" "SNDLVL_40dB"
+
+	"wave" ")items/equipment_pickup.wav" 
+}
+
+"FoFPlayer.Resupply"
+{
+
+	"channel" "CHAN_ITEM"
+	"volume" "0.6"
+	"pitch" "PITCH_NORM"
+
+	"soundlevel" "SNDLVL_60dB" 
+
+	"wave"	"items/ammo_pickup.wav"
+
+}
+
+"FoFPlayer.KnifePickUp"
+{
+	"channel"		"CHAN_ITEM"
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	 "soundlevel" "SNDLVL_65dB" 
+
+	"wave"	"items/knife_pickup.wav"
+
+}
+
+"FoFPlayer.AxePickUp"
+{
+	"channel"		"CHAN_ITEM"
+	"volume"		"0.8"
+	"pitch"                 "80" 
+
+	 "soundlevel" "SNDLVL_65dB" 
+
+	"wave"	"items/knife_pickup.wav"
+
+}
+
+"FoFPlayer.WeaponPickUp"
+{
+	"channel"		"CHAN_ITEM"
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	 "soundlevel" "SNDLVL_65dB" 
+
+	"wave"	"items/ammo_pickup.wav"
+
+}
+
+
+"Whiskey.Ask"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"wave"	"player/voice/whiskeygive_needawhiskey.wav"
+
+}
+
+
+"Player.WhiskeyMovement"
+{
+
+	"volume" "0.2"
+	"pitch" "PITCH_NORM"
+	"soundlevel" "SNDLVL_65dB"
+
+	"rndwave"
+	{
+	"wave" "player/whiskey_movement1.wav"
+	"wave" "player/whiskey_movement2.wav"
+	"wave" "player/whiskey_movement3.wav"
+	"wave" "player/whiskey_movement4.wav"
+	"wave" "player/whiskey_movement5.wav"
+	"wave" "player/whiskey_movement6.wav"
+	"wave" "player/whiskey_movement7.wav"
+	"wave" "player/whiskey_movement8.wav"
+	"wave" "player/whiskey_movement9.wav"
+	"wave" "player/whiskey_movement10.wav"
+	}
+} 
+
+
 "FoF.BountyObjective"
 {
 	"channel" "CHAN_AUTO"
-	"volume" "0.4"
+	"volume" "0.3"
 	"soundlevel" "SNDLVL_80dB"
 	"wave" "ambient/alarms/warningbell1.wav"
 } 
+
+"FoF.SackRelocated"
+{
+	"channel" "CHAN_AUTO"
+	"volume" "1.0"
+	"soundlevel" "SNDLVL_80dB"
+	"wave" "#/common/loot_relocate.wav"
+} 
+
+
+"FoF.AmmoPickup"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.35"
+	"pitch" 	"PITCH_NORM"
+	"soundlevel"    "SNDLVL_75dB"
+
+	"wave"	"ammo_pickup.wav"
+
+}
+
+"FoF.Death_p2"
+{
+	"soundlevel" "SNDLVL_95db"
+	"pitch" "90,105"
+	"volume" "0.6,0.9"
+	"rndwave"
+	{
+	"wave" "player/voice2/pain/pl_death1.wav"
+	"wave" "player/voice2/pain/pl_death2.wav"
+	"wave" "player/voice2/pain/pl_death3.wav"
+	"wave" "player/voice2/pain/pl_death4.wav"
+	"wave" "player/voice2/pain/pl_death5.wav"
+	"wave" "player/voice2/pain/pl_death6.wav"
+	"wave" "player/voice2/pain/pl_death7.wav"
+	"wave" "player/voice2/pain/pl_death8.wav"
+	"wave" "player/voice2/pain/pl_death9.wav"
+	}
+} 
+
+"FoF.HeadshotLoud"
+{
+	"soundlevel" "SNDLVL_100db"
+	"pitch" "PITCH_NORM"
+	"volume" "1.0"
+	"rndwave"
+	{
+	"wave" "player/headshot1.wav"
+	"wave" "player/headshot2.wav"
+	"wave" "player/headshot3.wav"
+	}
+}
+
+
+"FoF.Headshot"
+{
+	"soundlevel" "SNDLVL_50db"
+	"pitch" "PITCH_NORM"
+	"volume" "0.4"
+	"rndwave"
+	{
+	"wave" "player/headshot1.wav"
+	"wave" "player/headshot2.wav"
+	"wave" "player/headshot3.wav"
+	}
+} 
+
+"FoF.Pain1"
+{
+	"soundlevel" "SNDLVL_75dB"
+	"pitch" "PITCH_NORM"
+	"volume" "1.0"
+	"rndwave"
+	{
+	"wave" "player/voice/pain/pl_pain2.wav"
+	"wave" "player/voice/pain/pl_pain3.wav"
+	"wave" "player/voice/pain/pl_pain4.wav"
+	"wave" "player/voice/pain/pl_pain5.wav"
+	"wave" "player/voice/pain/pl_pain6.wav"
+	"wave" "player/voice/pain/pl_pain7.wav"
+	"wave" "player/voice/pain/pl_pain8.wav"
+	"wave" "player/voice/pain/pl_pain9.wav"
+	}
+} 
+
+"FoF.SmallPain"
+{
+	"soundlevel" "SNDLVL_75dB"
+	"pitch" "PITCH_NORM"
+	"volume" "0.2"
+	"rndwave"
+	{
+	"wave" "player/voice/pain/small_pain1.wav"
+	"wave" "player/voice/pain/small_pain2.wav"
+	"wave" "player/voice/pain/small_pain3.wav"
+	"wave" "player/voice/pain/small_pain4.wav"
+	"wave" "player/voice/pain/small_pain5.wav"
+	}
+} 
+
+"FoF.Banked"
+{
+	"soundlevel" "SNDLVL_75dB"
+	"pitch" "PITCH_NORM"
+	"volume" "1.0"
+	"rndwave"
+	{
+	"wave" "common/banked1.wav"
+	"wave" "common/banked2.wav"
+	"wave" "common/banked3.wav"
+	}
+} 
+
+
+// COMMANDS
+
+"voicecomm.1"
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/attack_killemall.wav"
+		"wave"	"player/voice/attack_shootdogs.wav"			
+	}
+}
+
+"voicecomm.2"
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{		
+		"wave"	"player/voice/go_go1.wav"
+		"wave"	"player/voice/go_go2.wav"
+		"wave"	"player/voice/go_moveit.wav"		
+	}
+}
+
+"voicecomm.3"
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/retreat_backdown.wav"
+		"wave"	"player/voice/retreat_fallback.wav"
+		"wave"	"player/voice/retreat_shinout.wav"
+	}
+}
+
+"voicecomm.4"
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/objective_findtheloot.wav"
+		"wave"	"player/voice/objective_letsgetgold.wav"
+	}
+}
+
+"voicecomm.5" // cover generic
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/cover_helpme.wav"
+		"wave"	"player/voice/cover_covermyass.wav"
+	}
+
+}
+
+"voicecomm.6" // wait
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/wait_holdon.wav"
+		"wave"	"player/voice/wait_wait1.wav"
+		"wave"	"player/voice/wait_wait2.wav"
+	}
+}
+
+
+
+"voicecomm.7" //pass the loot
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/giveloot_givemetheloot1.wav"
+		"wave"	"player/voice/giveloot_givemetheloot2.wav"
+		"wave"	"player/voice/giveloot_passgoldtome.wav"
+	}
+}
+
+
+//ALERTS DEFAULT
+
+"voicecomm.15" // Reloading
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"wave"	"player/voice/reloading_reload1.wav"
+}
+
+"voicecomm.13" // Enemy spotted
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/enemyspotted_iseethem1.wav"
+		"wave"	"player/voice/enemyspotted_iseethem2.wav"
+		"wave"	"player/voice/enemyspotted_theycome.wav"
+	}
+}
+
+
+"voicecomm.16" // No enemy here
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/noenemy_dontseenuttin.wav"
+		"wave"	"player/voice/noenemy_noenemyhere.wav"
+	}
+}
+
+"voicecomm.14" // Whiskey
+{
+	"volume"		"1.0"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/whiskey_passwhiskey1.wav"
+		"wave"	"player/voice/whiskey_passwhiskey2.wav"
+	}
+}
+
+"voicecomm.11" //yes
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/yeah_yeah1.wav"
+		"wave"	"player/voice/yeah_yeah2.wav"
+	}
+}
+
+
+
+"voicecomm.12" // no
+{
+	"volume"		"0.4"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_65db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/no_no1.wav"
+		"wave"	"player/voice/no_no2.wav"
+	}
+}
+
+
+"voicecomm.17" // need a weapon
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_65db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/needweapon_gimmeaweapon.wav"
+		"wave"	"player/voice/needweapon_ineedaweapon.wav"
+	}
+}
+
+// TAUNTS DEFAULT
+
+"voicecomm.21" // laugh
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_80db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/laugh_laugh1.wav"
+		"wave"	"player/voice/laugh_laugh2.wav"
+		"wave"	"player/voice/laugh_laugh.wav"
+	}
+}
+
+"voicecomm.22" // draw
+{
+	"volume"		"0.6"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/draw_draw1.wav"
+		"wave"	"player/voice/draw_draw2.wav"
+	}
+}
+
+"voicecomm.23" // fighting talk
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/fightingtalk_comeonbitch.wav"
+		"wave"	"player/voice/fightingtalk_gettinbackup.wav"
+		"wave"	"player/voice/fightingtalk_giveinandgo.wav"
+		"wave"	"player/voice/fightingtalk_pumpfulllead.wav"
+		"wave"	"player/voice/fightingtalk_windupdead.wav"
+	}
+}
+
+"voicecomm.24" // brag
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/brag_bestinwest.wav"
+		"wave"	"player/voice/brag_betcha.wav"
+		"wave"	"player/voice/brag_nochanceson.wav"
+		"wave"	"player/voice/brag_wasteofbullets.wav"
+	}
+}
+
+"voicecomm.25" // Howl
+{
+	"volume"		"0.65"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/howl_yeehaw1.wav"
+		"wave"	"player/voice/howl_yeehaw2.wav"
+		"wave"	"player/voice/howl_yeehaw3.wav"
+		"wave"	"player/voice/howl_yeehaw4.wav"
+		"wave"	"player/voice/howl_yeehaw5.wav"
+		"wave"	"player/voice/howl_woo1.wav"
+		"wave"	"player/voice/howl_woo2.wav"
+		"wave"	"player/voice/howl_woo3.wav"
+	}
+}
+
+"voicecomm.26" // coward
+{
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/coward_coward.wav"
+		"wave"	"player/voice/coward_yellerbelleh.wav"
+	}
+}
+
+"voicecomm.27" // fistfight
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/fistfight_mantoman.wav"
+		"wave"	"player/voice/fistfight_oldfashionedway.wav"
+		"wave"	"player/voice/fistfight_putemup.wav"
+	}
+}
+
+"voicecomm.28" // my gold
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/myloot_thatsmyloot.wav"
+		"wave"	"player/voice/myloot_withoutgold.wav"
+	}
+}
+
+
+"voicecomm.29" // shut up
+{
+	"volume"		"0.7"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice/fightingtalk_closemouth.wav"
+		"wave"	"player/voice/fightingtalk_quitshootin.wav"
+	}
+}
+
+
+// COMMANDS DESPERADO
+
+"voicecomm.1_p2"
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/attack_killemall.wav"
+		"wave"	"player/voice2/attack_shootdogs.wav"			
+	}
+}
+
+"voicecomm.2_p2"
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		
+		"wave"	"player/voice2/go_go1.wav"
+		"wave"	"player/voice2/go_go2.wav"
+	}
+}
+
+"voicecomm.3_p2"
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/retreat_fallback.wav"
+		"wave"	"player/voice2/retreat_shinout.wav"
+	}
+}
+
+"voicecomm.4_p2"
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"		"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/objective_findtheloot.wav"
+		"wave"	"player/voice2/objective_findtheloot2.wav"
+		"wave"	"player/voice2/objective_letsgetgold.wav"
+	}
+}
+
+"voicecomm.5_p2" // cover generic
+{
+	"volume"	"1"
+	"pitch"		"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/cover_helpme.wav"
+		"wave"	"player/voice2/cover_helpme2.wav"
+		"wave"	"player/voice2/cover_covermyass.wav"
+	}
+
+}
+
+"voicecomm.6_p2" // wait
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/wait_wait1.wav"
+		"wave"	"player/voice2/wait_wait2.wav"
+		"wave"	"player/voice2/wait_wait3.wav"
+	}
+}
+
+
+
+"voicecomm.7_p2" //pass the loot
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/giveloot_givemetheloot1.wav"
+		"wave"	"player/voice2/giveloot_givemetheloot2.wav"
+	}
+}
+
+
+//ALERTS DESPERADO
+
+"voicecomm.15_p2" // Reloading
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+	"wave"	"player/voice2/reloading_reload1.wav"
+	"wave"	"player/voice2/reloading_reload2.wav"
+	}
+}
+
+"voicecomm.13_p2" // Enemy spotted
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/enemyspotted_iseethem1.wav"
+		"wave"	"player/voice2/enemyspotted_iseethem2.wav"
+		"wave"	"player/voice2/enemyspotted_iseethem3.wav"
+		"wave"	"player/voice2/enemyspotted_theycome.wav"
+	}
+}
+
+
+"voicecomm.16_p2" // No enemy here
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/noenemy_dontseenuttin.wav"
+		"wave"	"player/voice2/noenemy_noenemyhere.wav"
+		"wave"	"player/voice2/noenemy_noenemyhere2.wav"
+	}
+}
+
+"voicecomm.14_p2" // Whiskey
+{
+	"volume"		"1.0"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/whiskey_passwhiskey1.wav"
+		"wave"	"player/voice2/whiskey_passwhiskey2.wav"
+		"wave"	"player/voice2/whiskey_passwhiskey3.wav"
+	}
+}
+
+"voicecomm.11_p2" //yes
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/yeah_yeah1.wav"
+		"wave"	"player/voice2/yeah_yeah2.wav"
+	}
+}
+
+
+
+"voicecomm.12_p2" // no
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_65db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/no_no1.wav"
+		"wave"	"player/voice2/no_no2.wav"
+		"wave"	"player/voice2/no_no3.wav"
+	}
+}
+
+
+"voicecomm.17_p2" // need a weapon
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_65db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/needweapon_gimmeaweapon.wav"
+		"wave"	"player/voice2/needweapon_gimmeaweapon2.wav"
+	}
+}
+
+// TAUNTS DESPERADO
+
+"voicecomm.21_p2" // laugh
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_80db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/laugh_laugh.wav"
+		"wave"	"player/voice2/laugh_laugh1.wav"
+		"wave"	"player/voice2/laugh_laugh2.wav"
+		"wave"	"player/voice2/laugh_laugh3.wav"
+	}
+}
+
+"voicecomm.22_p2" // draw
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/draw_draw1.wav"
+		"wave"	"player/voice2/draw_draw2.wav"
+	}
+}
+
+"voicecomm.23_p2" // fighting talk
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_105db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/fightingtalk_windupdead.wav"
+		"wave"	"player/voice2/fightingtalk_toughtest.wav"
+		"wave"	"player/voice2/fightingtalk_comeonbitch.wav"
+		"wave"	"player/voice2/fightingtalk_graveyard.wav"
+		"wave"	"player/voice2/fightingtalk_pumpfulllead.wav"
+		//"wave"	"player/voice2/fightingtalk_sleptwomen.wav"
+	}
+}
+
+"voicecomm.24_p2" // brag
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/brag_betcha.wav"
+		"wave"	"player/voice2/brag_betcha2.wav"
+		"wave"	"player/voice2/brag_nochanceson.wav"
+		"wave"	"player/voice2/brag_outtamyway.wav"
+	}
+}
+
+"voicecomm.25_p2" // Howl
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_105db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/howl_yeehaw1.wav"
+		"wave"	"player/voice2/howl_yeehaw2.wav"
+		"wave"	"player/voice2/howl_yeehaw3.wav"
+		"wave"	"player/voice2/howl_woo1.wav"
+		"wave"	"player/voice2/howl_woo2.wav"
+	}
+}
+
+"voicecomm.26_p2" // coward
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/coward_coward.wav"
+		"wave"	"player/voice2/coward_yellerbelleh.wav"
+	}
+}
+
+"voicecomm.27_p2" // fistfight
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/fistfight_mantoman.wav"
+		"wave"	"player/voice2/fistfight_oldfashionedway.wav"
+		"wave"	"player/voice2/fistfight_putemup.wav"
+	}
+}
+
+"voicecomm.28_p2" // my gold
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/myloot_thatsmyloot.wav"
+		"wave"	"player/voice2/myloot_withoutgold.wav"
+	}
+}
+
+
+"voicecomm.29_p2" // shut up
+{
+	"volume"		"1"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/fightingtalk_closemouth.wav"
+		"wave"	"player/voice2/fightingtalk_quitshootin.wav"
+	}
+}
+
+"Whiskey.Use1_p2"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.8"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/whiskeygive_haveadrink.wav"
+		"wave"	"player/voice2/whiskeygive_haveadrink2.wav"
+	}		
+}
+
+"Whiskey.StopCall_p2"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.0"
+	"pitch"			"PITCH_NORM"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice2/whiskeygive_needawhiskey.wav"
+		"wave"	"player/voice2/whiskeygive_needawhiskey2.wav"
+	}
+}
+
+"FoF.Death"
+{
+	"channel"	"CHAN_AUTO"
+	"soundlevel" 	"SNDLVL_85db"
+	"pitch" 	"PITCH_NORM"
+	"volume" 	"0.8"
+	"soundlevel" "SNDLVL_95db"
+	"pitch" "95,105"
+	"volume" "0.6,0.9"
+	"rndwave"
+	{
+	"wave" "player/voice/pain/pl_death1.wav"
+	"wave" "player/voice/pain/pl_death2.wav"
+	"wave" "player/voice/pain/pl_death3.wav"
+	"wave" "player/voice/pain/pl_death4.wav"
+	"wave" "player/voice/pain/pl_death5.wav"
+	"wave" "player/voice/pain/pl_death6.wav"
+	}
+} 
+
+//
+//
+// COMMANDS RANGER
+
+"voicecomm.1_p4"
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/attack_killemall.wav"
+		"wave"	"player/voice4/attack_shootdogs.wav"			
+	}
+}
+
+"voicecomm.2_p4"
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		
+		"wave"	"player/voice4/go_go1.wav"
+		"wave"	"player/voice4/go_go2.wav"
+	}
+}
+
+"voicecomm.3_p4"
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/retreat_fallback.wav"
+		"wave"	"player/voice4/retreat_shinout.wav"
+		"wave"	"player/voice4/retreat_backdown.wav"
+	}
+}
+
+"voicecomm.4_p4"
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"		"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/objective_findtheloot.wav"
+		"wave"	"player/voice4/objectives_geton.wav"
+		"wave"	"player/voice4/objetives_handle.wav"
+	}
+}
+
+"voicecomm.5_p4" // cover generic
+{
+	"volume"	"1"
+	"pitch"		"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/cover_helpme.wav"
+		"wave"	"player/voice4/cover_helpme2.wav"
+		"wave"	"player/voice4/cover_helpme3.wav"
+		"wave"	"player/voice4/cover_covermyass.wav"
+	}
+
+}
+
+"voicecomm.6_p4" // wait
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/wait_wait1.wav"
+		"wave"	"player/voice4/wait_wait2.wav"
+		"wave"	"player/voice4/wait_holdon.wav"
+	}
+}
+
+"voicecomm.7_p4" //pass the loot
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_85db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/giveloot_givemetheloot1.wav"
+		"wave"	"player/voice4/giveloot_givemetheloot2.wav"
+	}
+}
+
+
+//ALERTS RANGER
+
+"voicecomm.15_p4" // Reloading
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+	"wave"	"player/voice4/reloading_reload1.wav"
+	"wave"	"player/voice4/reloading_reload2.wav"
+	"wave"	"player/voice4/reloading_reload3.wav"
+	}	
+}
+
+"voicecomm.13_p4" // Enemy spotted
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/enemyspotted_iseethem1.wav"
+		"wave"	"player/voice4/enemyspotted_theycome.wav"
+	}
+}
+
+"voicecomm.16_p4" // No enemy here
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/noenemy_dontseenuttin.wav"
+		"wave"	"player/voice4/noenemy_noenemyhere.wav"
+	}
+}
+
+"voicecomm.14_p4" // Whiskey
+{
+	"volume"		"1.0"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/whiskey_passwhiskey1.wav"
+		"wave"	"player/voice4/whiskey_passwhiskey2.wav"
+	}
+}
+
+"voicecomm.11_p4" //yes
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/yeah_yeah1.wav"
+		"wave"	"player/voice4/yeah_yeah2.wav"
+		"wave"	"player/voice4/yeah_yeah3.wav"
+	}
+}
+
+"voicecomm.12_p4" // no
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_65db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/no_no1.wav"
+		"wave"	"player/voice4/no_no2.wav"
+		"wave"	"player/voice4/no_no3.wav"
+	}
+}
+
+"voicecomm.17_p4" // need a weapon
+{
+	"volume"		"0.9"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_75db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/needweapon_gimmeaweapon.wav"
+		"wave"	"player/voice4/needweapon_gimmeaweapon2.wav"
+		"wave"	"player/voice4/needweapon_gimmeaweapon3.wav"
+	}
+}
+
+// TAUNTS RANGER
+
+"voicecomm.21_p4" // laugh
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_80db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/laugh_laugh.wav"
+		"wave"	"player/voice4/laugh_laugh1.wav"
+		"wave"	"player/voice4/laugh_laugh2.wav"
+	}
+}
+
+"voicecomm.22_p4" // draw
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/draw_draw1.wav"
+		"wave"	"player/voice4/draw_draw2.wav"
+	}
+}
+
+"voicecomm.23_p4" // fighting talk
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_105db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/fightingtalk_windupdead.wav"
+		"wave"	"player/voice4/fightingtalk_comeonbitch.wav"
+		"wave"	"player/voice4/fightingtalk_pumpfulllead.wav"
+	}
+}
+
+"voicecomm.24_p4" // brag
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/brag_betcha.wav"
+		"wave"	"player/voice4/brag_bestinwest.wav"
+		"wave"	"player/voice4/brag_nochanceson.wav"
+		"wave"	"player/voice4/brag_brag1.wav"
+		"wave"	"player/voice4/brag_brag2.wav"
+	}
+}
+
+"voicecomm.25_p4" // Howl
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_105db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/howl_yeehaw1.wav"
+		"wave"	"player/voice4/howl_yeehaw2.wav"
+		"wave"	"player/voice4/howl_yeehaw3.wav"
+		"wave"	"player/voice4/howl_yeehaw4.wav"
+	}
+}
+
+"voicecomm.26_p4" // coward
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/coward_coward.wav"
+		"wave"	"player/voice4/coward_yellerbelleh.wav"
+	}
+}
+
+"voicecomm.27_p4" // fistfight
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/fistfight_mantoman.wav"
+		"wave"	"player/voice4/fistfight_putemup.wav"
+	}
+}
+
+"voicecomm.28_p4" // my gold
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/myloot_thatsmyloot.wav"
+		"wave"	"player/voice4/myloot_withoutgold.wav"
+	}
+}
+
+
+"voicecomm.29_p4" // shut up
+{
+	"volume"		"1"
+	"pitch"			"95,100"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/fightingtalk_closemouth.wav"
+		"wave"	"player/voice4/fightingtalk_quitshootin.wav"
+	}
+}
+
+"Whiskey.Use1_p4"
+{
+	"channel"		"CHAN_AUTO"
+	"volume"		"0.8"
+	"pitch"			"95, 100"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/whiskeygive_haveadrink.wav"
+		"wave"	"player/voice4/whiskeygive_haveadrink2.wav"
+		"wave"	"player/voice4/whiskeygive_haveadrink3.wav"
+	}		
+}
+
+"Whiskey.StopCall_p4"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"1.0"
+	"pitch"			"95, 100"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice4/whiskeygive_needawhiskey.wav"
+		"wave"	"player/voice4/whiskeygive_needawhiskey2.wav"
+	}
+}
+
+"FoF.Death_p4"
+{
+	"channel"	"CHAN_AUTO"
+	"soundlevel" 	"SNDLVL_85db"
+	"pitch" 	"95,100"
+	"volume" 	"0.8,1.0"
+	"rndwave"
+	{
+	"wave" "player/voice4/pain/pl_death1.wav"
+	"wave" "player/voice4/pain/pl_death2.wav"
+	"wave" "player/voice4/pain/pl_death3.wav"
+	"wave" "player/voice4/pain/pl_death4.wav"
+	"wave" "player/voice4/pain/pl_death5.wav"
+	"wave" "player/voice4/pain/pl_death6.wav"
+	"wave" "player/voice4/pain/pl_death7.wav"
+	"wave" "player/voice4/pain/pl_death8.wav"
+	}
+} 
+
+
+// BANDIDO
+
+"Whiskey.Use1_p3"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.9"
+	"pitch"			"95,105"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/give_whiskey_1.mp3"
+		"wave"	"player/voice3/give_whiskey_2.mp3"
+	}		
+}
+
+"Whiskey.StopCall_p3"
+{
+	"channel"		"CHAN_VOICE"
+	"volume"		"0.9"
+	"pitch"			"95,105"
+
+	"soundlevel"	"SNDLVL_85dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/ask_whiskey_1.mp3"
+		"wave"	"player/voice3/ask_whiskey_2.mp3"
+	}
+}
+
+// COMMANDS BANDIDO
+
+"voicecomm.1_p3"
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		//"wave"	"player/voice3/attack_1.mp3"
+		"wave"	"player/voice3/attack_2.mp3"	
+		"wave"	"player/voice3/attack_3.mp3"		
+	}
+}
+
+"voicecomm.2_p3"
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/go_1.mp3"
+		//"wave"	"player/voice3/go_2.mp3"	
+		"wave"	"player/voice3/go_3.mp3"		
+	}
+}
+
+"voicecomm.3_p3"
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/retreat_1.mp3"
+		"wave"	"player/voice3/retreat_2.mp3"	
+		"wave"	"player/voice3/retreat_3.mp3"		
+	}
+}
+
+"voicecomm.4_p3"
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/objectives_1.mp3"
+		//"wave"	"player/voice3/objectives_2.mp3"	
+		"wave"	"player/voice3/objectives_3.mp3"
+		"wave"	"player/voice3/objectives_4.mp3"		
+	}
+}
+
+"voicecomm.5_p3" // cover generic
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/help_1.mp3"
+		"wave"	"player/voice3/help_2.mp3"	
+		"wave"	"player/voice3/help_3.mp3"		
+	}
+}
+
+"voicecomm.6_p3" // wait
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/wait_1.mp3"
+		"wave"	"player/voice3/wait_2.mp3"	
+		"wave"	"player/voice3/wait_3.mp3"		
+	}
+}
+
+
+
+"voicecomm.7_p3" //pass the loot
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/pass_loot_1.mp3"
+		"wave"	"player/voice3/pass_loot_2.mp3"	
+		"wave"	"player/voice3/pass_loot_3.mp3"	
+		"wave"	"player/voice3/pass_loot_4.mp3"
+		"wave"	"player/voice3/pass_loot_2.mp3"	
+		"wave"	"player/voice3/pass_loot_3.mp3"	
+		"wave"	"player/voice3/pass_loot_1.mp3"		
+	}
+}
+
+
+//ALERTS BANDIDO
+
+"voicecomm.15_p3" // Reloading
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/reloading_1.mp3"
+		"wave"	"player/voice3/reloading_2.mp3"	
+		"wave"	"player/voice3/reloading_3.mp3"		
+	}
+}
+
+"voicecomm.13_p3" // Enemy spotted
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/enemies_1.mp3"
+		//"wave"	"player/voice3/enemies_2.mp3"	
+		"wave"	"player/voice3/enemies_3.mp3"		
+	}
+}
+
+"voicecomm.16_p3" // No enemy here
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/no_enemy_1.mp3"
+		"wave"	"player/voice3/no_enemy_2.mp3"	
+		"wave"	"player/voice3/no_enemy_3.mp3"		
+	}
+}
+
+"voicecomm.14_p3" // Whiskey
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/whiskey_3.mp3"
+		"wave"	"player/voice3/whiskey_3.mp3"	
+		"wave"	"player/voice3/whiskey_3.mp3"		
+	}
+}
+
+"voicecomm.11_p3" //yes
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/yes_1.mp3"
+		"wave"	"player/voice3/yes_2.mp3"	
+		"wave"	"player/voice3/yes_3.mp3"		
+	}
+}
+
+"voicecomm.12_p3" // no
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/no_1.mp3"
+		"wave"	"player/voice3/no_2.mp3"	
+		"wave"	"player/voice3/no_3.mp3"	
+		"wave"	"player/voice3/no_4.mp3"		
+	}
+}
+
+"voicecomm.17_p3" // need a weapon
+{
+	"volume"		"1"
+	"pitch"			"97,102"
+
+	"soundlevel"	"SNDLVL_95dB"
+
+	"rndwave"
+	{
+		"wave"	"player/voice3/need_weapon_1.mp3"
+		"wave"	"player/voice3/need_weapon_2.mp3"		
+	}
+}
+
+
+"voicecomm.21_p3" // laugh
+{
+	"volume"		"0.8,0.9"
+	"pitch"			"97, 103"
+
+	"soundlevel"		"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave" npc/mexican/laugh1.wav
+		"wave" npc/mexican/laugh2.wav
+	}
+}
+
+"voicecomm.22_p3" // draw
+{
+	"volume"		"0.7,0.85"
+	"pitch"			"97, 103"
+
+	"soundlevel"		"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"npc/mexican/kill-01.wav"
+		"wave"	"npc/mexican/kill-02.wav"
+		"wave"	"npc/mexican/kill-03.wav"
+		"wave"	"npc/mexican/kill-04.wav"
+		"wave"	"npc/mexican/kill-05.wav"
+	}
+}
+
+"voicecomm.23_p3" // fighting talk
+{
+	"volume"		"0.9,1.0"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave" npc/mexican/consider-01.wav 
+		"wave" npc/mexican/consider-02.wav 
+		"wave" npc/mexican/youare-01.wav 
+		"wave" npc/mexican/youare-02.wav 
+		"wave" npc/mexican/youare-03.wav
+		"wave" npc/mexican/seeyou-02.wav
+		"wave" npc/mexican/seeyou-03.wav
+	}
+}
+
+"voicecomm.24_p3" // brag
+{
+	"volume"		"0.7,0.9"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+	"wave" npc/mexican/ikilled-01.wav
+	"wave" npc/mexican/ikilled-02.wav
+	"wave" npc/mexican/ikilled-03.wav
+	}
+}
+
+"voicecomm.25_p3" // Howl
+{
+	"volume"		"0.85,1.0"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+	"wave" npc/mexican/andale-01.wav
+	"wave" npc/mexican/andale-02.wav 
+	"wave" npc/mexican/andale-03.wav 
+	"wave" npc/mexican/andale-04.wav 
+	"wave" npc/mexican/andale-05.wav 
+	"wave" npc/mexican/andale-06.wav 
+	"wave" npc/mexican/andale-07.wav 
+	}
+}
+
+
+"voicecomm.26_p3" // coward
+{
+	"volume"		"0.8,1.0"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave" npc/mexican/duck-01.wav
+		"wave" npc/mexican/duck-02.wav
+		"wave" npc/mexican/duck-03.wav
+	}
+}
+
+"voicecomm.27_p3" // fistfight
+{
+	"volume"		"0.9,1.0"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave" "npc/mexican/illpunch-01.wav"
+		"wave" "npc/mexican/illpunch-02.wav"
+		"wave" "npc/mexican/illpunch-03.wav"
+		"wave" "npc/mexican/illpunch-04.wav"
+	}
+}
+
+"voicecomm.28_p3" // my gold
+{
+	"volume"		"0.8"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_95db"
+
+	"rndwave"
+	{
+		"wave"	"npc/mexican/ahmisombrero-04.wav"
+		"wave"	"npc/mexican/ahmisombrero-05.wav"
+	}
+}
+
+
+"voicecomm.29_p3" // shut up
+{
+	"volume"		"0.9"
+	"pitch"			"97, 103"
+
+	"soundlevel"	"SNDLVL_90db"
+
+	"rndwave"
+	{
+		"wave" npc/mexican/ihave-01.wav
+		"wave" npc/mexican/ihave-02.wav
+		"wave" npc/mexican/ihave-03.wav
+		"wave" npc/mexican/ihave-04.wav
+	}
+}
+
+//
+
+"MoneyCrate.Open"
+{
+	"channel"	"CHAN_AUTO"
+	"volume" "0.8"
+	"pitch" "PITCH_NORM"
+	"soundlevel" "SNDLVL_70db"
+
+	"rndwave"
+	{
+		"wave" "common/ammobox_open1.wav"
+		"wave" "common/ammobox_open2.wav"
+	}
+} 
+
+"Player.Spurs"
+{
+	"volume" "0.08"
+	"pitch" "PITCH_NORM"
+	"soundlevel" "SNDLVL_NORM"
+
+	"rndwave"
+	{
+	"wave" "player/spurs1.wav"
+	"wave" "player/spurs2.wav"
+	"wave" "player/spurs3.wav"
+	"wave" "player/spurs4.wav"
+	}
+} 
+
+
+"FoF.Rumble"
+{
+	"volume"		"1.0"
+	"pitch"			"80,120"
+
+	"soundlevel"	"SNDLVL_140dB"
+
+	"wave"			"ambient/atmosphere/terrain_rumble1.wav"
+}
+
+
+"FoF.Lavaflare"
+{
+	
+		"volume"	"0.4, 0.6"
+		"pitch"		"80,120"
+		"soundlevel"	"SNDLVL_140dB"
+		
+		"rndwave"
+		{
+			"wave"	"ambient/lava/flare1.wav"
+			"wave"	"ambient/lava/flare2.wav"
+			"wave"	"ambient/lava/flare3.wav"
+			"wave"	"ambient/lava/flare4.wav"
+		}
+	
+}
+
+
+"FoF.LavaDeath"
+{
+	
+	"volume"	"0.9"
+	"pitch"		"80,120"
+	"soundlevel"  "SNDLVL_100dB"
+
+	"wave"	")player/lavadeath.wav"
+}
+
+"FoF.LootIn"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"0.2"
+	"soundlevel"  "SNDLVL_60dB"
+	"wave"	")common/looted.wav"
+
+}
+
+
+// FOF MUSIC
+
+"anthem.victory"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"wave"	"#common/victory.mp3"
+
+}
+
+"anthem.defeat"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"1"
+	"soundlevel"	"SNDLVL_140dB"
+	"wave"	"#common/defeat.mp3"
+
+}
+
+
+"Bounty.Victory"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"0.6"
+	"soundlevel"	"SNDLVL_80dB"
+	"wave"	"#music/bounty/fof_bounty_1.mp3"
+
+}
+
+"Bounty.Defeat"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"0.6"
+	"soundlevel"	"SNDLVL_80dB"
+	"wave"	"#music/bounty/fof_bounty_2.mp3"
+
+}
+
+
+// HL2
+
+
+"HL2Player.PickupWeapon"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.5"
+	"soundlevel"  "SNDLVL_75dB"
+	"rndwave"
+	{
+	"wave"	"items/ammo_pickup1.wav"
+	"wave"	"items/ammo_pickup1.wav"
+	}
+}
+
+"HL2Player.TrainUse"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"plats/train_use1.wav"
+}
+
+"HL2Player.Use"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_select.wav"
+}
+
+"HL2Player.UseNPC"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_select.wav"
+}
+
+"HL2Player.UseDeny"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_denyselect.wav"
+}
+
+"HL2Player.BurnPain"
+{
+	"volume"	"0.20" // RYell 50 def.
+	"soundlevel"  "SNDLVL_70dB"
+
+	"rndwave"
+	{
+			"wave"	"player/pl_burnpain1.wav"
+			"wave"	"player/pl_burnpain2.wav"
+			"wave"	"player/pl_burnpain3.wav"
+	}
+}
+
+
+// SHARED player sounds
+
+"Player.Death"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"	"player/pl_pain5.wav"
+		"wave"	"player/pl_pain6.wav"
+		"wave"	"player/pl_pain7.wav"
+	}
+}
+
+"Player.PlasmaDamage"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.5"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"player/general/flesh_burn.wav"
+}
+
+"Player.SonicDamage"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.7"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"	"player/pl_pain5.wav"
+		"wave"	"player/pl_pain6.wav"
+		"wave"	"player/pl_pain7.wav"
+	}
+}
+
+"Player.DrownStart"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"1.0"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"		"90,110"
+
+	"wave"	"player/pl_drown1.wav"
+}
+
+"Player.Swim"
+{
+	"channel"	"CHAN_STATIC"
+	"volume"	"0.5"
+	"pitch"		"PITCH_NORM"
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"		"player/footsteps/wade5.wav"
+		"wave"		"player/footsteps/wade6.wav"
+		"wave"		"player/footsteps/wade7.wav"
+		"wave"		"player/footsteps/wade8.wav"
+	}
+}
+
+"Player.FallDamage"
+{
+	"channel"	"CHAN_AUTO"
+	"volume"	"0.75"
+	"pitch"		"90,110"
+	"soundlevel"	"SNDLVL_NORM"
+
+	"rndwave"
+	{
+		"wave"		"player/pl_fallpain1.wav"
+		"wave"		"player/pl_fallpain3.wav"
+	}
+}
+
+"Player.FallGib"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.85"
+	"pitch"		"90,105"
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"		"physics/body/body_medium_break2.wav"
+
+}
+
+"Player.DrownContinue"
+{
+	"channel"	"CHAN_VOICE"
+	"volume"	"1.0"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"		"90,110"
+
+	"rndwave"
+	{
+		"wave"	"player/pl_drown1.wav"
+		"wave"	"player/pl_drown2.wav"
+		"wave"	"player/pl_drown3.wav"
+	}
+}
+
+"Player.Wade"
+{
+	"channel"	"CHAN_BODY"
+	"volume"	"0.25"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"rndwave"
+	{
+		"wave"	"player/footsteps/wade5.wav"
+		"wave"	"player/footsteps/wade6.wav"
+		"wave"	"player/footsteps/wade7.wav"
+		"wave"	"player/footsteps/wade8.wav"
+	}
+}
+
+"Player.AmbientUnderWater"
+{
+	"channel"	"CHAN_STATIC"
+	"volume"	"0.22"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"ambient/water/underwater.wav"
+}
+
+"Player.UseTrain"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.8"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"plats/train_use1.wav"
+}
+
+"Player.UseDeny"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.4"
+	"soundlevel"  "SNDLVL_75dB"
+
+	"wave"	"common/wpn_select.wav"
+}
+
+"Player.PickupWeapon"
+{
+	"channel"	"CHAN_ITEM"
+	"volume"	"0.5"
+	"soundlevel"  "SNDLVL_75dB"
+	"pitch"	"95,105"
+	"rndwave"
+	{
+	"wave"	"items/ammo_pickup1.wav"
+	"wave"	"items/ammo_pickup2.wav"
+	}
+}
