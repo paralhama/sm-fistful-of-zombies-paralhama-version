@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "fof_skins\players\infected/face_glow"
+	"$bumpmap" "fof_skins\players\infected/head_n"
+	"$halflambert" "1"
+	"$model" "1"
+	"$selfillum" "1"
+	"$selfillummask" "fof_skins\players\infected/face_glow_white"
+	"$phongtint" "[0.9 0.8 0.7]"
+	"$phongboost" "4.0"
+	"$phongexponent" "12"
+	"$phongfresnelranges" "[0.4 0.2 1]"
+	"$rimlight" "1"
+	"$rimlightexponent" "1"
+	"$rimlightboost" "0.02"
+}

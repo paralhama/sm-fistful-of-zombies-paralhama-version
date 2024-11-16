@@ -1,0 +1,7 @@
+"FoF.BountyObjective"
+{
+	"channel" "CHAN_AUTO"
+	"volume" "0.4"
+	"soundlevel" "SNDLVL_80dB"
+	"wave" "ambient/alarms/warningbell1.wav"
+} 

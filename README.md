@@ -40,11 +40,9 @@ If the infected player receives damage from any of the items on this list, the p
 ![fof_fistful](https://github.com/user-attachments/assets/7b4573bb-82ab-435f-a4c5-9882e5adbc28)
 ![fof_desperados](https://github.com/user-attachments/assets/1e7cd6cf-9316-414e-aa3f-d82af4f959d5)
 
-- I will try to add more features soon...
-  - Modifies the body and fist skin in first person for the infected team.
-  - Add icons above the weapons scattered around the map that are visible only to human players. These icons will help human players, easily locate the weapons.
-  - Add a special ability for infected players where, when they throw a TNT barrel, it will self-ignite and then explode. This ability will help force human players out of high ground positions, creating opportunities for infected players to gain the upper hand in combat.
-  - Add an immersive visual effect to the infected players' screen when they respawn. This effect could include a temporary distortion, color shift, or a visual overlay that reflects the transformation and the infected state, enhancing the overall gameplay experience and making the respawn feel more dramatic and impactful.
+For this plugin to work properly, players need to have a specific configuration to enable the automatic download of custom files. 
+To achieve this, you can use the "fof-enable-custom-files" plugin developed by me! :)
+https://github.com/paralhama/fof-enable-custom-files
 
 # Let me know if you know how to add any of these future ideas listed above :)
 
