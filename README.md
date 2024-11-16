@@ -1,6 +1,12 @@
+---
+# Important Notice!
+### For this plugin to work properly, players need to have a specific configuration to enable the automatic download of custom files. To achieve this, you can use the [fof-enable-custom-files](https://github.com/paralhama/fof-enable-custom-files) plugin developed by me! :)
+ 
+---
 # sm-fistful-of-zombies Paralhama version :D
 I added some new features to this plugin :D
 - Infecteds do not take fall damage and move faster.
+- Barrels thrown by infected catch fire and explode after a short time.
 - Infected are slowed down when receiving any damage that is not caused by `x_arrow`, `physics`, `prop_dynamic`, `dynamite`, `kick` or `blast`!                         
 If the infected player receives damage from any of the items on this list, the player will not be slowed down, as these items already cause a slowdown.
 - In the [CrimsonTautology](https://github.com/CrimsonTautology/sm-fistful-of-zombies) version,  all the whiskeys around the maps are removed and replaced with random weapons. I also added `fof_horse`, `npc_horse`, and all `fof_crates` to be replaced with weapons as well. And when all weapons are spawned on the map, a glowing outline is applied to all of them, thanks to [Backwards](https://github.com/backwards-dev)  for making it possible to enable outline glows on weapons and pops on fistful of frags :)
@@ -39,10 +45,6 @@ If the infected player receives damage from any of the items on this list, the p
 - Nocky's plugin only darkens the maps to simulate night but doesn't remove the sun, so on some maps, the sun is still visible while the rest of the map appears darker. To fix this, I modified the skybox of every map to fof05, which is the full moon sky from Fistful of Frags. This creates a more immersive atmosphere, aligning better with the theme of the infected vs. humans game mode.
 ![fof_fistful](https://github.com/user-attachments/assets/7b4573bb-82ab-435f-a4c5-9882e5adbc28)
 ![fof_desperados](https://github.com/user-attachments/assets/1e7cd6cf-9316-414e-aa3f-d82af4f959d5)
-
-For this plugin to work properly, players need to have a specific configuration to enable the automatic download of custom files. 
-To achieve this, you can use the "fof-enable-custom-files" plugin developed by me! :)
-https://github.com/paralhama/fof-enable-custom-files
 
 # Let me know if you know how to add any of these future ideas listed above :)
 
