@@ -44,6 +44,7 @@ int loadedMaps;
 #define SOUND_ROUNDSTART "music/standoff1.mp3"
 #define SOUND_STINGER "music/course_stinger1.wav"
 #define SOUND_NOPE "player/voice/no_no1.wav"
+#define SOUND_BREATH "player/breath1.wav"
 
 #define TEAM_HUMAN 2  // Vigilantes
 #define TEAM_HUMAN_STR "2"
@@ -135,7 +136,6 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
-
 	for(int i = 1; i <= MaxClients; i++)
 		if(IsClientInGame(i))
 			SDKHook(i, SDKHook_OnTakeDamage, OnTakeDamagePlayer);
@@ -321,6 +321,7 @@ public void OnMapStart()
 
 	PrecacheSound("vehicles/train/whistle.wav", true);
 	PrecacheSound("player/fallscream1.wav", true);
+	PrecacheSound("player/breath1.wav", true);
 
 	g_VigilanteModelIndex = PrecacheModel("models/playermodels/player1.mdl");
 	g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
@@ -354,7 +355,11 @@ public void OnClientWeaponSwitchPost(int client, int wpnid)
     if(StrEqual(szWpn, "weapon_fists")  && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
 	{
         SetEntProp(wpnid, Prop_Send, "m_nModelIndex", 0);
-        SetEntProp(g_PVMid[client], Prop_Send, "m_nModelIndex", g_iClawModel);
+        // Somente modifica se a entidade for válida
+        if(IsValidEntity(g_PVMid[client]))
+        {
+            SetEntProp(g_PVMid[client], Prop_Send, "m_nModelIndex", g_iClawModel);
+        }
     }
 }
 
@@ -427,17 +432,14 @@ void RemoveHat(int client)
 // Get model index and prevent server from crash
 int Weapon_GetViewModelIndex2(int client, int sIndex)
 {
-	if(IsZombie(client))
+	while ((sIndex = FindEntityByClassname2(sIndex, "predicted_viewmodel")) != -1)
 	{
-		while ((sIndex = FindEntityByClassname2(sIndex, "predicted_viewmodel")) != -1)
-		{
-			int Owner = GetEntPropEnt(sIndex, Prop_Send, "m_hOwner");
-			
-			if (Owner != client)
-				continue;
-			
-			return sIndex;
-		}
+		int Owner = GetEntPropEnt(sIndex, Prop_Send, "m_hOwner");
+		
+		if (Owner != client)
+			continue;
+		
+		return sIndex;
 	}
 	return -1;
 }
@@ -1085,7 +1087,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     currentTime = GetGameTime();
 
     // Verifica o ataque primário (IN_ATTACK)
-    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client) && !IsFakeClient(client))
     {
         // Se o tempo desde o último ataque for menor que o cooldown, cancela o ataque
         if (currentTime - g_flLastAttack[client] < COOLDOWN_TIME)
@@ -1099,17 +1101,17 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 			g_flLastAttack[client] = currentTime;
 			if (g_SoundAttack[client])
 			{
-				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 5);
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 5); // linha 1102
 			}
 			else
 			{
-				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 0);
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 0); // linha 1106
 			}
         }
     }
 
     // Verifica o ataque secundário (IN_ATTACK2)
-    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client) && !IsFakeClient(client))
     {
         // Se o tempo desde o último ataque secundário for menor que o cooldown, cancela o ataque
         if (currentTime - g_flLastAttack2[client] < COOLDOWN_TIME)
@@ -1123,11 +1125,11 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 			g_flLastAttack2[client] = currentTime;
 			if (g_SoundAttack[client])
 			{
-				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 4);
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 4); // linhas 1126
 			}
 			else
 			{
-				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 0);
+				SetEntProp(g_PVMid[client], Prop_Send, "m_nSequence", 0); //linha 1130
 			}
         }
     }
@@ -1489,7 +1491,6 @@ void JoinHumanTeam(int client)
 
 void JoinZombieTeam(int client)
 {
-    SetEntProp(client, Prop_Send, "m_iTeamNum", 3);
     ChangeClientTeam(client, TEAM_ZOMBIE);
 }
 
@@ -1696,9 +1697,11 @@ void InfectedToZombie(int client)
 	StripWeapons(client);
 	UseWeapon(client, "weapon_fists");
 	FakeClientCommandEx(client, "use weapon_fists");
+	g_PVMid[client] = Weapon_GetViewModelIndex2(client, -1);
 
 	JoinZombieTeam(client);
 	Entity_SetModelIndex(client, g_ZombieModelIndex);
+	Entity_SetModelIndex(g_PVMid[client], g_iClawModel);
 
 	EmitZombieYell(client);
 	SetEntPropFloat(client, Prop_Send, "m_flDrunkness", 0.0);
@@ -1752,9 +1755,23 @@ bool InfectionStep(int& client, float& interval, int& currentCall)
 		if (!g_human_transformation_message[client])
 		{
 			SetEntPropFloat(client, Prop_Send, "m_flDrunkness", drunkness);
+			EmitSoundToClient(client, SOUND_BREATH);
 			CPrintToChatAll("%t", "has been infected and can transform at any moment", PlayerName);
+
+			Client_ScreenFade(
+			client,         // ID do jogador
+			200,           // Duração do fade
+			FFADE_IN,       // Modo de fade (fade entrando)
+			4000,           // Holdtime (quanto tempo fica visível)
+			0,              // Red (0 para verde puro)
+			255,            // Green (255 para verde máximo)
+			0,              // Blue (0 para verde puro)
+			5,             // Alpha (Transparencia)
+			true            // Reliable message
+			);
+
 			g_human_transformation_message[client] = true; // Marca como mostrada
-			CreateTimer(5.0, stop_drunkness_effect, client);
+			CreateTimer(8.0, stop_drunkness_effect, client);
 		}
 	}
 
@@ -1776,6 +1793,8 @@ bool InfectionStep(int& client, float& interval, int& currentCall)
 public Action:stop_drunkness_effect(Handle:timer, any:client)
 {
 	SetEntPropFloat(client, Prop_Send, "m_flDrunkness", 0.0);
+	StopSound(client, SNDCHAN_AUTO, SOUND_BREATH);
+
 }
 
 void RoundEndCheck()
