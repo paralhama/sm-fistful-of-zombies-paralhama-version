@@ -61,7 +61,10 @@ If the infected player receives damage from any of the items on this list, the p
 Fistful of Zombies; a custom zombie survival game mode for Fistful of Frags.
 
 ![image](https://github.com/user-attachments/assets/4621e29c-ce04-4643-981a-883646b5d46a)
+### I would like to express my gratitude and congratulations to [Nimrod Hempel](https://steamcommunity.com/profiles/76561198153465035/) for animating the view model claws
 ![image](https://github.com/user-attachments/assets/f4085e93-de0f-487a-a551-8912a8cd6872)
+![image](https://github.com/user-attachments/assets/ed1f07f5-53d5-4192-b143-bbd0af5ccb99)
+
 
 
 
