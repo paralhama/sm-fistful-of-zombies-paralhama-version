@@ -8,7 +8,8 @@ With the plugin above, all custom file download configurations will be done auto
 - mp_teamplay 1
 - fof_sv_maxteams 2
 
-### Remember that you need to use a plugin that will automatically pre-cache the resources you have placed and register them in the Download-Table. I use and recommend the [S-Downloader](https://github.com/paralhama/S-Downloader) plugin for this.
+### Remember that you need to use a plugin that will automatically pre-cache the resources you have placed and register them in the Download-Table. 
+### I use and recommend the [S-Downloader](https://github.com/paralhama/S-Downloader) plugin for this.
 
 
 ---
