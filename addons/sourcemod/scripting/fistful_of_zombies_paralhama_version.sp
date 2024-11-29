@@ -163,13 +163,13 @@ public void OnPluginStart()
 
 	g_InfectionCvar = CreateConVar("foz_infection", "0.10", "Chance that a human will be infected when punched by a zombie. Value is scaled such that more human players increase the chance", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
-	g_Infected_Speed = CreateConVar("foz_infected_speed", "300.0", "Change the max speed for a infected player", FCVAR_NOTIFY, true, 255.0, true, 320.0);
+	g_Infected_Speed = CreateConVar("foz_infected_speed", "280.0", "Change the max speed for a infected player", FCVAR_NOTIFY, true, 255.0, true, 320.0);
 
 	g_Infected_Slow = CreateConVar("foz_infected_slow", "100.0", "Change the max speed for an infected player when receive damage", FCVAR_NOTIFY, true, 0.0, true, 320.0);
 
-	g_Infected_Slow_Time = CreateConVar("foz_infected_slow_time", "0.8", "Seconds that the infected player will be slowed when taking damage", FCVAR_NOTIFY, true, 0.5, true, 2.0);
+	g_Infected_Slow_Time = CreateConVar("foz_infected_slow_time", "1.0", "Seconds that the infected player will be slowed when taking damage", FCVAR_NOTIFY, true, 0.5, true, 2.0);
 
-	g_Infected_Damage = CreateConVar("foz_infected_damage", "0.45", "Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.", FCVAR_NOTIFY, true, 0.10, true, 1.0);
+	g_Infected_Damage = CreateConVar("foz_infected_damage", "0.50", "Set the damage multiplier that human players deal to infected, lower values than 1.0 reduce damage (example, 0.50 means half damage). HEAD DAMAGE ON INFECTED PLAYERS IS ALWAYS 1.0, AS PER GAME STANDARD.", FCVAR_NOTIFY, true, 0.10, true, 1.0);
 
 	g_Human_Damage = CreateConVar("foz_human_damage", "1.5", "Set the damage multiplier that infected players deal to humans. (1.0 is the game standart and 2.0 means double damage)", FCVAR_NOTIFY, true, 1.0, true, 2.0);
 
@@ -1087,7 +1087,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     currentTime = GetGameTime();
 
     // Verifica o ataque primário (IN_ATTACK)
-    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client) && !IsFakeClient(client))
+    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
     {
         // Se o tempo desde o último ataque for menor que o cooldown, cancela o ataque
         if (currentTime - g_flLastAttack[client] < COOLDOWN_TIME)
@@ -1111,7 +1111,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     }
 
     // Verifica o ataque secundário (IN_ATTACK2)
-    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client) && !IsFakeClient(client))
+    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
     {
         // Se o tempo desde o último ataque secundário for menor que o cooldown, cancela o ataque
         if (currentTime - g_flLastAttack2[client] < COOLDOWN_TIME)
