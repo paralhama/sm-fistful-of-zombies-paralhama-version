@@ -35,6 +35,12 @@ If the infected player receives damage from any of the items on this list, the p
 // z - brightest
 
 // !!! DONT USE "a" value, because this value making surfaces completely black !!!
+// The maps that are already configured below are the ones I have already tested
+//and they looked good with the night mode modification
+//other maps looked strange
+//but feel free to insert any map in the configuration below
+//but remember to test if the map looks acceptable
+//as some maps look very strange
 
 "MapLightingChanger"
 {
