@@ -1087,7 +1087,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     currentTime = GetGameTime();
 
     // Verifica o ataque primário (IN_ATTACK)
-    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    if (buttons & IN_ATTACK && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client) && IsFakeClient(client) || !IsFakeClient(client))
     {
         // Se o tempo desde o último ataque for menor que o cooldown, cancela o ataque
         if (currentTime - g_flLastAttack[client] < COOLDOWN_TIME)
@@ -1111,7 +1111,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     }
 
     // Verifica o ataque secundário (IN_ATTACK2)
-    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client))
+    if (buttons & IN_ATTACK2 && IsZombie(client) && IsClientInGame(client) && IsPlayerAlive(client) && IsFakeClient(client) || !IsFakeClient(client))
     {
         // Se o tempo desde o último ataque secundário for menor que o cooldown, cancela o ataque
         if (currentTime - g_flLastAttack2[client] < COOLDOWN_TIME)
