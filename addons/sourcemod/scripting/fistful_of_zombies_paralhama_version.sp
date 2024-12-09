@@ -161,7 +161,7 @@ public void OnPluginStart()
 
 	g_RatioCvar = CreateConVar("foz_ratio", "0.65", "Percentage of players that start as human.", FCVAR_NOTIFY, true, 0.01, true, 1.0);
 
-	g_InfectionCvar = CreateConVar("foz_infection", "0.10", "Chance that a human will be infected when punched by a zombie. Value is scaled such that more human players increase the chance", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_InfectionCvar = CreateConVar("foz_infection", "0.50", "Chance that a human will be infected when punched by a zombie. Value is scaled such that more human players increase the chance", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
 	g_Infected_Speed = CreateConVar("foz_infected_speed", "280.0", "Change the max speed for a infected player", FCVAR_NOTIFY, true, 255.0, true, 320.0);
 
@@ -332,7 +332,7 @@ public void OnMapStart()
 
 	// initial setup
 	ConvertSpawns();
-	WeaponSpawn(g_LootTable, g_LootTotalWeight);
+	KillWeaponSpawn();
 	g_TeamplayEntity = SpawnZombieTeamplayEntity();
 	g_AutoSetGameDescription = true;
 
@@ -389,6 +389,7 @@ void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 	CreateTimer(0.5, RemoveHatTimer, _, TIMER_REPEAT);
 	RequestFrame(PlayerSpawnDelay, userid);
 }
+
 
 stock int GetSO()
 {
@@ -540,6 +541,11 @@ Action Event_PlayerTeam(Event event, const char[] name, bool dontBroadcast)
         return Plugin_Handled;
     }
 
+    if (team == TEAM_ZOMBIE && GetRoundState() == RoundPre)
+    {
+        ChangeClientTeam(userid, TEAM_HUMAN);
+    }
+
     return Plugin_Continue;
 }
 
@@ -554,16 +560,21 @@ void PlayerSpawnDelay(int userid)
     g_GivenPrimary[client] = false;
     g_GivenSecondary[client] = false;
 
+    if (GetRoundState() == RoundPre)
+    {
+        ChangeClientTeam(client, TEAM_HUMAN);
+        StripWeapons_RoundPre(client);
+        KillWeaponSpawn();
+    }
+
     if (IsHuman(client))
     {
         RandomizeModel(client);
 
         // if a player spawns as human give them their primary and secondary
         // gear
-        CreateTimer(0.2, Timer_GiveSecondaryWeapon, userid,
-                TIMER_FLAG_NO_MAPCHANGE);
-        CreateTimer(0.3, Timer_GivePrimaryWeapon, userid,
-                TIMER_FLAG_NO_MAPCHANGE);
+        CreateTimer(0.5, Timer_GiveSecondaryWeapon, userid, TIMER_FLAG_NO_MAPCHANGE);
+        CreateTimer(0.9, Timer_GivePrimaryWeapon, userid, TIMER_FLAG_NO_MAPCHANGE);
 
         //PrintCenterText(client, "Survive the zombie plague!");
     }
@@ -595,6 +606,7 @@ void BecomeZombieDelay(int userid)
 
     if (!IsEnabled()) return;
     if (!IsClientIngame(client)) return;
+    if (GetRoundState() == RoundPre) return;
 
     JoinZombieTeam(client);
 }
@@ -609,12 +621,15 @@ Action Timer_GivePrimaryWeapon(Handle timer, int userid)
     if (g_GivenPrimary[client]) return Plugin_Handled;
     char weapon[MAX_KEY_LENGTH];
 
-    GetRandomValueFromTable(g_GearPrimaryTable, g_GearPrimaryTotalWeight,
-            weapon, sizeof(weapon));
-    GivePlayerItem(client, weapon);
-    UseWeapon(client, weapon);
+    if (GetRoundState() != RoundPre)
+    {
+		GetRandomValueFromTable(g_GearPrimaryTable, g_GearPrimaryTotalWeight,
+				weapon, sizeof(weapon));
+		GivePlayerItem(client, weapon);
+		UseWeapon(client, weapon);
 
-    g_GivenPrimary[client] = true;
+		g_GivenPrimary[client] = true;
+    }
 
     return Plugin_Handled;
 }
@@ -630,12 +645,16 @@ Action Timer_GiveSecondaryWeapon(Handle timer, int userid)
 
     char weapon[MAX_KEY_LENGTH];
 
-    GetRandomValueFromTable(g_GearSecondaryTable, g_GearSecondaryTotalWeight,
-            weapon, sizeof(weapon));
-    GivePlayerItem(client, weapon);
-    UseWeapon(client, weapon, true);
 
-    g_GivenSecondary[client] = true;
+    if (GetRoundState() != RoundPre)
+    {
+		GetRandomValueFromTable(g_GearSecondaryTable, g_GearSecondaryTotalWeight,
+				weapon, sizeof(weapon));
+		GivePlayerItem(client, weapon);
+		UseWeapon(client, weapon, true);
+
+		g_GivenSecondary[client] = true;
+	}
 
     return Plugin_Handled;
 }
@@ -783,6 +802,18 @@ public Action OnPlayerHurt(Event event, const char[] name, bool dontBroadcast)
 	char weapon[64];
 	GetEventString(event, "weapon", weapon, sizeof(weapon));
 	int victim = GetClientOfUserId(GetEventInt(event, "userid"));
+
+	if (IsHuman(victim))
+	{
+		if (StrEqual(weapon, "kick"))
+		{
+			if (InfectionChanceRoll())
+			{
+				BecomeInfected(victim);
+			}
+		}
+	}
+
 
 	if (IsZombie(victim))
 	{
@@ -982,6 +1013,16 @@ Action Command_JoinTeam(int client, const char[] command, int argc)
 
     char arg[32];
     GetCmdArg(1, arg, sizeof(arg));
+
+    if (GetRoundState() == RoundPre)
+    {
+        // block players switching to humans
+        if (StrEqual(arg, TEAM_ZOMBIE_STR, false) ||
+                StrEqual(arg, "auto", false))
+        {
+			ChangeClientTeam(client, TEAM_HUMAN);
+        }
+    }
 
     if (GetRoundState() == RoundGrace)
     {
@@ -1400,6 +1441,49 @@ void WeaponSpawn(KeyValues loot_table, int loot_total_weight)
 	}
 }
 
+void KillWeaponSpawn()
+{
+    int entity = INVALID_ENT_REFERENCE;
+    int count = 0;
+
+    // Remove item_whiskey entities
+    while((entity = FindEntityByClassname(entity, "weapon_*")) != INVALID_ENT_REFERENCE)
+    {
+        if(GetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity") == -1)
+		{
+			Entity_Kill(entity);
+			count++;
+        }
+    }
+
+    // Remove item_whiskey entities
+    while((entity = FindEntityByClassname(entity, "item_whiskey")) != INVALID_ENT_REFERENCE)
+    {
+        Entity_Kill(entity);
+        count++;
+    }
+
+    // Reset entity reference for processing fof_horse entities
+    entity = INVALID_ENT_REFERENCE;
+
+    // Remove fof_horse entities
+    while((entity = FindEntityByClassname(entity, "fof_horse")) != INVALID_ENT_REFERENCE)
+    {
+        Entity_Kill(entity);
+        count++;
+    }
+
+    // Reset entity reference for processing npc_horse entities
+    entity = INVALID_ENT_REFERENCE;
+
+    // Remove npc_horse entities
+    while((entity = FindEntityByClassname(entity, "npc_horse")) != INVALID_ENT_REFERENCE)
+    {
+        Entity_Kill(entity);
+        count++;
+    }
+}
+
 // spawn the fof_teamplay entity that will control the game's logic.
 int SpawnZombieTeamplayEntity()
 {
@@ -1491,7 +1575,10 @@ void JoinHumanTeam(int client)
 
 void JoinZombieTeam(int client)
 {
-    ChangeClientTeam(client, TEAM_ZOMBIE);
+    if (GetRoundState() != RoundPre)
+    {
+		ChangeClientTeam(client, TEAM_ZOMBIE);
+    }
 }
 
 void RandomizeTeams()
@@ -1566,6 +1653,30 @@ void UseWeapon(int client, const char[] weapon, bool second=false)
     ClientCommand(client, tmp);
 }
 
+void StripWeapons_RoundPre(int client)
+{
+	int weapon_ent;
+	char class_name[MAX_KEY_LENGTH];
+	int offs = FindSendPropInfo("CBasePlayer", "m_hMyWeapons");
+
+	for (int i = 0; i <= 47; i++)
+	{
+		weapon_ent = GetEntDataEnt2(client, offs + (i * 4));
+		if (weapon_ent == -1) continue;
+
+		GetEdictClassname(weapon_ent, class_name, sizeof(class_name));
+		if (StrEqual(class_name, "weapon_fists")) continue;
+
+		// Remover a arma do jogador
+		RemovePlayerItem(client, weapon_ent);
+		RemoveEdict(weapon_ent);
+	}
+
+	// Equipar o jogador com "weapon_fists"
+	UseWeapon(client, "weapon_fists");
+	FakeClientCommandEx(client, "use weapon_fists");
+}
+
 void StripWeapons(int client)
 {
 	int weapon_ent;
@@ -1586,12 +1697,15 @@ void StripWeapons(int client)
 
 		// Criar a entidade da arma dropada
 		int dropped_weapon = CreateEntityByName(class_name);
-		if (dropped_weapon != -1)
+		if (GetRoundState() != RoundPre)
 		{
-			CPrintToChat(client, "%t", "Zombies Can Not Use Guns");
-			TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
-			DispatchSpawn(dropped_weapon);
-			AddGlowServer(dropped_weapon);
+			if (dropped_weapon != -1)
+			{
+				CPrintToChat(client, "%t", "Zombies Can Not Use Guns");
+				TeleportEntity(dropped_weapon, pos, NULL_VECTOR, NULL_VECTOR);
+				DispatchSpawn(dropped_weapon);
+				AddGlowServer(dropped_weapon);
+			}
 		}
 
 		// Remover a arma do jogador
@@ -1604,7 +1718,6 @@ void StripWeapons(int client)
 	FakeClientCommandEx(client, "use weapon_fists");
 	CreateTimer(0.1, SetMaxSpeedInfectedStrip, client, TIMER_FLAG_NO_MAPCHANGE);
 }
-
 
 Action SetMaxSpeedInfectedStrip(Handle timer, int client)
 {
