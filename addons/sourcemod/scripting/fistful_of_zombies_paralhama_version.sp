@@ -327,8 +327,8 @@ public void OnMapStart()
 	g_DesperadoModelIndex = PrecacheModel("models/playermodels/player2.mdl");
 	g_BandidoModelIndex = PrecacheModel("models/playermodels/bandito.mdl");
 	g_RangerModelIndex = PrecacheModel("models/playermodels/frank.mdl");
-	g_ZombieModelIndex = PrecacheModel("models/fof_skins_v2/players/infected/infected.mdl"); // Infected players model
-	g_iClawModel = PrecacheModel("models/fof_skins_v2/players/infected/arms/infected_fists.mdl"); // infected claws view model
+	g_ZombieModelIndex = PrecacheModel("models/fof_skins_v3/players/infected/infected.mdl"); // Infected players model
+	g_iClawModel = PrecacheModel("models/fof_skins_v3/players/infected/arms/infected_fists.mdl"); // infected claws view model
 
 	// initial setup
 	ConvertSpawns();
