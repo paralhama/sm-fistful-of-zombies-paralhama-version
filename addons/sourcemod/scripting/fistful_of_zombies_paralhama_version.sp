@@ -30,7 +30,7 @@ Handle g_hHudSync;
 
 int loadedMaps;
 
-#define PLUGIN_VERSION "2.0"
+#define PLUGIN_VERSION "3.0"
 #define PLUGIN_NAME "[FoF] Fistful Of Zombies - Paralhama version"
 
 #define DMG_FALL (1 << 5)
